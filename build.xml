@@ -30,8 +30,7 @@
 
     <target name="dist" depends="jar" description="create distribution">
         <mkdir dir="dist"/>
-        <delete file="dist/*.jar"/>
-        <copy todir="dist">
+        <copy todir="dist" overwrite="true">
             <fileset dir="lib/runtime">
                 <include name="*.jar"/>
             </fileset>
@@ -41,7 +40,6 @@
         <signjar alias="uakari" 
                  keystore="private/keystore"
                  storepass="${keystorepass}"
-                 preservelastmodified="true"
                  lazy="true"
                  verbose="false">
             <path>
