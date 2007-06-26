@@ -56,7 +56,7 @@ public class RapidForm {
 
         searchField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent keyEvent) {
-                if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
                     searchStarted();
                     searcher.searchWeb(searchField.getText());
                 }
@@ -72,7 +72,7 @@ public class RapidForm {
 
         urlField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent keyEvent) {
-                if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
                     searchStarted();
                     searcher.scanPage(urlField.getText());
                 }

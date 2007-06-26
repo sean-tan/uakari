@@ -28,7 +28,7 @@ public class RapidShareUrlParser {
 
                 Page webResponse = client.getPage(url);
                 String s = webResponse.getWebResponse().getContentAsString();
-                if(s == null)//not sure why this happens
+                if (s == null)//not sure why this happens
                     continue;
 
                 Pattern pattern = Pattern.compile("(rapidshare.com(/|%2F)[^\\s|>|<|\"|\\(|\\)|\\\\]+)", Pattern.MULTILINE);

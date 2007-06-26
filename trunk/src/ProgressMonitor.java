@@ -1,9 +1,9 @@
 import javax.swing.event.TableModelEvent;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 class ProgressMonitor implements Runnable {
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
@@ -16,19 +16,19 @@ class ProgressMonitor implements Runnable {
 
     public void run() {
         model.foreachDownloader(new DownloadsTableModel.DownloaderVisitor() {
-           public void visit(Downloader downloader, String url, int rowIndex) {
-               Long lastSize = rates.get(url);
-               long soFar = downloader.getDownloadedSoFar();
-               if (lastSize == null) {
-                   lastSize = soFar;
-               }
+            public void visit(Downloader downloader, String url, int rowIndex) {
+                Long lastSize = rates.get(url);
+                long soFar = downloader.getDownloadedSoFar();
+                if (lastSize == null) {
+                    lastSize = soFar;
+                }
 
-               long currentRate = soFar - lastSize;
-               downloader.setCurrentRate(currentRate);
-               rates.put(url, soFar);
+                long currentRate = soFar - lastSize;
+                downloader.setCurrentRate(currentRate);
+                rates.put(url, soFar);
 
-               model.notifyListeners(new TableModelEvent(model, rowIndex, rowIndex, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
-           }
+                model.notifyListeners(new TableModelEvent(model, rowIndex, rowIndex, TableModelEvent.ALL_COLUMNS, TableModelEvent.UPDATE));
+            }
         });
     }
 
