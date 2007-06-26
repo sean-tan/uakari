@@ -97,8 +97,8 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
     private static class ProgressCellRenderer implements TableCellRenderer {
         private final JProgressBar progressBar = new JProgressBar(0, 100);
 
-        public Component getTableCellRendererComponent(JTable jTable, Object object, boolean b, boolean b1, int i, int i1) {
-            Downloader downloader = (Downloader) object;
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Downloader downloader = (Downloader) value;
             if (downloader == null) {
                 progressBar.setValue(0);
             } else {
@@ -114,10 +114,11 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
         private static final int KILOBYTE = 1024;
         private static final int MEGABYTE = KILOBYTE * KILOBYTE;
 
-        public Component getTableCellRendererComponent(JTable jTable, Object object, boolean b, boolean b1, int i, int i1) {
-            JLabel label = (JLabel) super.getTableCellRendererComponent(jTable, object, b, b1, i, i1);
-            Downloader downloader = (Downloader) object;
-            if (downloader == null) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            Downloader downloader = (Downloader) value;
+            Boolean downloadChecked = (Boolean) table.getValueAt(row, Col.indexOf(Col.DOWNLOAD));
+            if (downloader == null || !downloadChecked) {
                 label.setText("");
             } else if (!downloader.hasStarted()) {
                 label.setText("queued");
