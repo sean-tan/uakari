@@ -27,7 +27,7 @@ class RapidShareResourceFinder {
         return false;
     }
 
-    public static void checkUrlValidity(String url) throws InvalidRapidshareUrlException {
+    public static String checkUrlValidity(String url) throws InvalidRapidshareUrlException {
         try {
             WebClient client = new WebConversation();
             ClientProperties properties = client.getClientProperties();
@@ -38,13 +38,19 @@ class RapidShareResourceFinder {
             WebResponse webResponse = client.getResponse(new GetMethodWebRequest(url));
 
             String fileNotFound = "File not found";
-            if (webResponse.getText().contains(fileNotFound))
+            String html = webResponse.getText();
+            if (html.contains(fileNotFound))
                 throw new InvalidRapidshareUrlException(url, fileNotFound);
 
             String deltedFile = "This file has been deleted";
-            if (webResponse.getText().contains(deltedFile)) {
+            if (html.contains(deltedFile)) {
                 throw new InvalidRapidshareUrlException(url, deltedFile);
             }
+            String fileMarker = "You want to download the file <b>";
+            int startIndex = html.indexOf(fileMarker);
+            String end = html.substring(startIndex + fileMarker.length(), html.length());
+            int endIndex = end.indexOf("</b>");
+            return end.substring(0, endIndex);
         } catch (HttpNotFoundException e) {
             throw new InvalidRapidshareUrlException(url, "404 - file not found");
         } catch (InvalidRapidshareUrlException e) {
