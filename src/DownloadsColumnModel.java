@@ -52,7 +52,7 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
             }
         });
 
-        addColumn(new TableColumn(Col.indexOf(Col.SIZE), 50, striped(new DownloadSizeCellRenderer()), new DefaultCellEditor(new JTextField())) {
+        addColumn(new TableColumn(Col.indexOf(Col.SIZE), 90, striped(new DownloadSizeCellRenderer()), new DefaultCellEditor(new JTextField())) {
             {
                 setHeaderValue(Col.SIZE.toString().toLowerCase());
             }

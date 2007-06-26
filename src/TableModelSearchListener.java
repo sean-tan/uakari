@@ -12,8 +12,8 @@ class TableModelSearchListener implements SearchListener {
     public void addSearchResult(String parentPage, String url) {
         if (!tableModel.containsUrl(url)) {
             try {
-                RapidShareResourceFinder.checkUrlValidity(url);
-                tableModel.add(new Row(false, url, parentPage));
+                String actualUrl = RapidShareResourceFinder.checkUrlValidity(url);
+                tableModel.add(new Row(false, actualUrl, parentPage));
             } catch (InvalidRapidshareUrlException e) {
                 audit.addMessage(e);
             }
