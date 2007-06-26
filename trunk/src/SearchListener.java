@@ -1,5 +1,5 @@
 public interface SearchListener {
-    void addSearchResult(String url);
+    void addSearchResult(String parentPage, String url);
 
     void searchFinished();
 }

@@ -52,7 +52,7 @@ class DownloadsTableModel implements TableModel {
     }
 
     public boolean isCellEditable(int row, int col) {
-        return DownloadsColumnModel.Col.DOWNLOAD == col(0);
+        return DownloadsColumnModel.Col.DOWNLOAD == col(col);
     }
 
     public Object getValueAt(int rowIndex, int colIndex) {
@@ -70,7 +70,7 @@ class DownloadsTableModel implements TableModel {
     }
 
     public void setValueAt(Object object, int rowIndex, int colIndex) {
-        if (DownloadsColumnModel.Col.DOWNLOAD != col(0))
+        if (DownloadsColumnModel.Col.DOWNLOAD != col(colIndex))
             return;
 
         Boolean flag = (Boolean) object;
@@ -117,7 +117,7 @@ class DownloadsTableModel implements TableModel {
 
     public void foreachDownloader(DownloadsTableModel.DownloaderVisitor downloaderVisitor) {
         for (Integer rowIndex : downloaders) {
-            String url = (String) getValueAt(rowIndex, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.FILE));
+            String url = (String) getValueAt(rowIndex, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.RAPIDSHARE_FILE));
             Downloader downloader = (Downloader) getValueAt(rowIndex, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.PROGRESS));
             if (downloader != null)
                 downloaderVisitor.visit(downloader, url, rowIndex);

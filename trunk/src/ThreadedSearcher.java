@@ -30,8 +30,8 @@ class ThreadedSearcher implements Searcher {
                 try {
                     List<String> pages = Google.searchFor("rapidshare.com " + query);
                     rapidShareUrlParser.foreachUrlIn(pages, new UrlHandler() {
-                        public void handle(String url) {
-                            addUrl(url);
+                        public void handle(String parentPage, String url) {
+                            addUrl(parentPage, url);
                         }
                     });
                 } catch (IOException e) {
@@ -48,8 +48,8 @@ class ThreadedSearcher implements Searcher {
             public void run() {
                 try {
                     rapidShareUrlParser.foreachUrlIn(Collections.singletonList(url), new UrlHandler() {
-                        public void handle(String url) {
-                            addUrl(url);
+                        public void handle(String parentPage, String url) {
+                            addUrl(parentPage, url);
                         }
                     });
                 } catch (IOException e) {
@@ -71,9 +71,9 @@ class ThreadedSearcher implements Searcher {
         this.listeners.add(listener);
     }
 
-    private void addUrl(String url) {
+    private void addUrl(String parentPage, String url) {
         for (SearchListener listener : listeners) {
-            listener.addSearchResult(url);
+            listener.addSearchResult(parentPage, url);
         }
     }
 }

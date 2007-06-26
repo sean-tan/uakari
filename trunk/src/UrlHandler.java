@@ -1,3 +1,3 @@
 public interface UrlHandler {
-    void handle(String url);
+    void handle(String parentPage, String url);
 }

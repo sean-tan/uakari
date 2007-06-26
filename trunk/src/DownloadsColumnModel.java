@@ -15,7 +15,7 @@ import java.util.Map;
 
 class DownloadsColumnModel extends DefaultTableColumnModel {
     enum Col {
-        DOWNLOAD, FILE, SIZE, PROGRESS;
+        DOWNLOAD, RAPIDSHARE_FILE, PARENT_PAGE, SIZE, PROGRESS;
 
         private static final Map<Col, Integer> indexes = new HashMap() {
             {
@@ -33,26 +33,32 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
     }
 
     {
-        addColumn(new TableColumn(0, 60, striped(new JCheckBoxCellRenderer()), new DefaultCellEditor(new JCheckBox())) {
+        addColumn(new TableColumn(Col.indexOf(Col.DOWNLOAD), 60, striped(new JCheckBoxCellRenderer()), new DefaultCellEditor(new JCheckBox())) {
             {
                 setHeaderValue(Col.DOWNLOAD.toString().toLowerCase());
                 setMaxWidth(80);
             }
         });
 
-        addColumn(new TableColumn(1, 400, striped(new DefaultTableCellRenderer()), new DefaultCellEditor(new JTextField())) {
+        addColumn(new TableColumn(Col.indexOf(Col.RAPIDSHARE_FILE), 500, striped(new DefaultTableCellRenderer()), new DefaultCellEditor(new JTextField())) {
             {
-                setHeaderValue(Col.FILE.toString().toLowerCase());
+                setHeaderValue(Col.RAPIDSHARE_FILE.toString().toLowerCase());
             }
         });
 
-        addColumn(new TableColumn(2, 50, striped(new DownloadSizeCellRenderer()), new DefaultCellEditor(new JTextField())) {
+        addColumn(new TableColumn(Col.indexOf(Col.PARENT_PAGE), 20, striped(new DefaultTableCellRenderer()), new DefaultCellEditor(new JTextField())) {
+            {
+                setHeaderValue(Col.PARENT_PAGE.toString().toLowerCase());
+            }
+        });
+
+        addColumn(new TableColumn(Col.indexOf(Col.SIZE), 50, striped(new DownloadSizeCellRenderer()), new DefaultCellEditor(new JTextField())) {
             {
                 setHeaderValue(Col.SIZE.toString().toLowerCase());
             }
         });
 
-        addColumn(new TableColumn(3, 20, striped(new ProgressCellRenderer()), new DefaultCellEditor(new JTextField())) {
+        addColumn(new TableColumn(Col.indexOf(Col.PROGRESS), 20, striped(new ProgressCellRenderer()), new DefaultCellEditor(new JTextField())) {
             {
                 setHeaderValue(Col.PROGRESS.toString().toLowerCase());
             }

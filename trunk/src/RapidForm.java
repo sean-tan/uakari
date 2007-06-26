@@ -46,6 +46,7 @@ public class RapidForm {
         table.setShowHorizontalLines(true);
         table.setGridColor(Color.GRAY);
         table.setOpaque(false);
+        table.setCellSelectionEnabled(true);
         controlsTabbedPane.setBorder(new DropShadowBorder(true));
         tabbedPane.setBorder(new DropShadowBorder(true));
 
