@@ -30,15 +30,19 @@
 
     <target name="dist" depends="jar" description="create distribution">
         <mkdir dir="dist"/>
-        <copy todir="dist" overwrite="true">
+        <copy todir="dist" overwrite="false" preservelastmodified="true">
             <fileset dir="lib/runtime">
                 <include name="*.jar"/>
             </fileset>
+        </copy>
+
+        <copy todir="dist" overwrite="true" preservelastmodified="false">
             <fileset file="build/uakari.jar"/>
         </copy>
 
-        <signjar alias="uakari" 
+        <signjar alias="uakari"
                  keystore="private/keystore"
+                 preservelastmodified="true"
                  storepass="${keystorepass}"
                  lazy="true"
                  verbose="false">
