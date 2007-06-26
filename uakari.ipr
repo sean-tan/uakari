@@ -4,7 +4,7 @@
     <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
       <additionalClassPath>
-        <entry dir="file://$PROJECT_DIR$/lib/jetbrains" />
+        <entry dir="file://$PROJECT_DIR$/lib/buildtime" />
       </additionalClassPath>
       <antReference projectDefault="true" />
       <customJdkName value="" />
