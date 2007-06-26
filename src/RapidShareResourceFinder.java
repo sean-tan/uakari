@@ -1,13 +1,13 @@
 import com.meterware.httpunit.Button;
 import com.meterware.httpunit.ClientProperties;
 import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.HttpNotFoundException;
 import com.meterware.httpunit.SubmitButton;
 import com.meterware.httpunit.WebClient;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebLink;
 import com.meterware.httpunit.WebResponse;
-import com.meterware.httpunit.HttpNotFoundException;
 
 import java.io.InputStream;
 
@@ -45,9 +45,9 @@ class RapidShareResourceFinder {
             if (webResponse.getText().contains(deltedFile)) {
                 throw new InvalidRapidshareUrlException(url, deltedFile);
             }
-        } catch(HttpNotFoundException e) {
+        } catch (HttpNotFoundException e) {
             throw new InvalidRapidshareUrlException(url, "404 - file not found");
-        } catch ( InvalidRapidshareUrlException e) {
+        } catch (InvalidRapidshareUrlException e) {
             throw e;
         } catch (Exception e) {
             throw new InvalidRapidshareUrlException(url, e);

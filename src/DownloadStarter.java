@@ -1,5 +1,5 @@
-import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 class DownloadStarter implements TableModelListener {
     private final DownloadsTableModel tableModel;
@@ -11,7 +11,7 @@ class DownloadStarter implements TableModelListener {
     }
 
     public void tableChanged(TableModelEvent tableModelEvent) {
-        if(tableModelEvent.getColumn() == 0) {
+        if (tableModelEvent.getColumn() == 0) {
             int row = tableModelEvent.getFirstRow();
             String url = (String) tableModel.getValueAt(row, 1);
             Boolean flag = (Boolean) tableModel.getValueAt(row, 0);

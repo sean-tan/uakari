@@ -34,8 +34,8 @@ class DownloadService {
     public void stopDownloading(String url) {
         downloaders.get(url).stop();
 //        try {
-            Future future = tasks.remove(url);
-            future.cancel(false);
+        Future future = tasks.remove(url);
+        future.cancel(false);
 //        } catch (InterruptedException e) {
 //            audit.addMessage(e);
 //        } catch (ExecutionException e) {

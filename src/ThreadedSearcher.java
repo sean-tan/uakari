@@ -19,7 +19,7 @@ class ThreadedSearcher implements Searcher {
     }
 
     public void interuptSearch() {
-        if(this.work != null)
+        if (this.work != null)
             this.work.cancel(true);
         finsihed();
     }

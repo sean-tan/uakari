@@ -1,11 +1,11 @@
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.text.Document;
 import javax.swing.text.BadLocationException;
-import java.io.StringWriter;
+import javax.swing.text.Document;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
-class SwingAudit implements Audit{ 
+class SwingAudit implements Audit {
     private static final int MAX_LOG_LENGTH = (1024 * 1024);
 
     private JTextArea textArea;

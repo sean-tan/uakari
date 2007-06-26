@@ -1,4 +1,3 @@
-
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -59,7 +58,7 @@ class DownloadsTableModel implements TableModel {
     public Object getValueAt(int rowIndex, int colIndex) {
         Row row = data.get(rowIndex);
         DownloadsColumnModel.Col col = col(colIndex);
-        switch(col) {
+        switch (col) {
             case PROGRESS:
                 return downloadService.getDownloader(row.getUrl());
             case SIZE:
@@ -71,15 +70,15 @@ class DownloadsTableModel implements TableModel {
     }
 
     public void setValueAt(Object object, int rowIndex, int colIndex) {
-        if(DownloadsColumnModel.Col.DOWNLOAD != col(0))
+        if (DownloadsColumnModel.Col.DOWNLOAD != col(0))
             return;
-        
+
         Boolean flag = (Boolean) object;
         Row row = data.get(rowIndex);
         row.setDownloading(flag);
         notifyListeners(new TableModelEvent(this, rowIndex, rowIndex, colIndex, TableModelEvent.UPDATE));
 
-        if(flag)
+        if (flag)
             this.downloaders.add(rowIndex);
     }
 
@@ -91,7 +90,7 @@ class DownloadsTableModel implements TableModel {
         Iterator<TableModelListener> iterator = listeners.iterator();
         while (iterator.hasNext()) {
             TableModelListener listener = iterator.next();
-            if(listener == tableModelListener)
+            if (listener == tableModelListener)
                 iterator.remove();
         }
     }
@@ -120,7 +119,7 @@ class DownloadsTableModel implements TableModel {
         for (Integer rowIndex : downloaders) {
             String url = (String) getValueAt(rowIndex, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.FILE));
             Downloader downloader = (Downloader) getValueAt(rowIndex, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.PROGRESS));
-            if(downloader != null)
+            if (downloader != null)
                 downloaderVisitor.visit(downloader, url, rowIndex);
         }
     }

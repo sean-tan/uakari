@@ -24,7 +24,7 @@ public class Main {
         DownloadsTableModel tableModel = new DownloadsTableModel(columnModel, service);
         RapidForm form = new RapidForm(tableModel, columnModel, settings, audit);
         ProgressMonitor progressMonitor = new ProgressMonitor(tableModel);
-         progressMonitor.start();
+        progressMonitor.start();
 
         JXFrame frame = new JXFrame("uakari");
         form.showUsing(frame);

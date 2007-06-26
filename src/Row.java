@@ -12,7 +12,7 @@ class Row {
     }
 
     public Object value(DownloadsColumnModel.Col col) {
-        switch(col) {
+        switch (col) {
             case DOWNLOAD:
                 return downloading;
             case FILE:

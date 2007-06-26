@@ -10,20 +10,22 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.Color;
 import java.awt.Component;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 class DownloadsColumnModel extends DefaultTableColumnModel {
     enum Col {
         DOWNLOAD, FILE, SIZE, PROGRESS;
 
-        private static final Map<Col, Integer> indexes = new HashMap() {{
-            Col[] cols = Col.values();
-            for (int i = 0; i < cols.length; i++) {
-                Col col = cols[i];
-                put(col, i);
+        private static final Map<Col, Integer> indexes = new HashMap() {
+            {
+                Col[] cols = Col.values();
+                for (int i = 0; i < cols.length; i++) {
+                    Col col = cols[i];
+                    put(col, i);
+                }
             }
-        }};
+        };
 
         public static int indexOf(Col col) {
             return indexes.get(col);
@@ -77,7 +79,7 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
             else
                 component.setBackground(Color.WHITE);
 
-            if(isSelected) {
+            if (isSelected) {
                 component.setBackground(Color.BLUE);
                 component.setForeground(Color.WHITE);
             }
