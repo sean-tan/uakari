@@ -40,13 +40,13 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
             }
         });
 
-        addColumn(new TableColumn(Col.indexOf(Col.RAPIDSHARE_FILE), 100, striped(new DownloadFileCellRenderer()), new DefaultCellEditor(new JTextField())) {
+        addColumn(new TableColumn(Col.indexOf(Col.RAPIDSHARE_FILE), 300, striped(new DownloadFileCellRenderer()), new DefaultCellEditor(new JTextField())) {
             {
                 setHeaderValue(Col.RAPIDSHARE_FILE.toString().toLowerCase());
             }
         });
 
-        addColumn(new TableColumn(Col.indexOf(Col.PARENT_PAGE), 400, striped(new DefaultTableCellRenderer()), new DefaultCellEditor(new JTextField())) {
+        addColumn(new TableColumn(Col.indexOf(Col.PARENT_PAGE), 300, striped(new DefaultTableCellRenderer()), new DefaultCellEditor(new JTextField())) {
             {
                 setHeaderValue(Col.PARENT_PAGE.toString().toLowerCase());
             }
