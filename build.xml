@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="uakari-deploy" default="jar">
+    <property file="private.properties"/>
+
     <path id="classpath.uidesigner">
         <fileset dir="lib/jetbrains">
             <include name="*.jar"/>
@@ -17,5 +19,33 @@
 
         <jar destfile="build/uakari.jar"
              basedir="${uakari.output.dir}"/>
+    </target>
+
+    <target name="dist" depends="jar">
+
+        <mkdir dir="private"/>
+        <delete file="private/keystore"/>
+        <genkey alias="uakari" storepass="${keystorepass}" keystore="private/keystore"
+                dname="CN=uakari, OU=uakari, O=uakari, C=UK"/>
+
+        <delete dir="dist"/>
+        <mkdir dir="dist"/>
+        <copy todir="dist">
+            <fileset dir="lib">
+                <include name="*.jar"/>
+                <exclude name="jetbrains"/>
+            </fileset>
+            <fileset file="build/uakari.jar"/>
+        </copy>
+
+        <signjar alias="uakari" keystore="private/keystore"
+                 storepass="${keystorepass}"
+                 preservelastmodified="true" verbose="true">
+            <path>
+                <fileset dir="dist" includes="*.jar"/>
+            </path>
+        </signjar>
+
+        <copy file="src/uakari.jnlp" todir="dist"/>
     </target>
 </project>

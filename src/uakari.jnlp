@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<jnlp spec="1.0+" codebase="http://uakari.googlecode.com/svn/trunk/releases/1">-->
+<jnlp spec="1.0+" codebase="file:///Users/nick/projects/uakari/trunk/dist">
+    <information>
+        <vendor>uakari</vendor>
+        <title>rapidshare download service</title>
+        <homepage href="http://code.google.com/p/uakari/"/>
+    </information>
+    <offline-allowed/>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se version="1.5+"/>
+
+        <jar href="uakari.jar"/>
+
+        <jar href="commons-codec-1.3.jar"/>
+        <jar href="commons-collections-3.2.jar"/>
+        <jar href="commons-httpclient-3.0.1.jar"/>
+        <jar href="commons-httpclient-3.1-beta1.jar"/>
+        <jar href="commons-io-1.3.jar"/>
+        <jar href="commons-lang-2.2.jar"/>
+        <jar href="commons-logging-1.1.jar"/>
+        <jar href="htmlunit-1.11.jar"/>
+        <jar href="httpunit-1.6.2.jar"/>
+        <jar href="jaxen-1.1.jar"/>
+        <jar href="js-1.6R5.jar"/>
+        <jar href="js.jar"/>
+        <jar href="looks-2.0.4.jar"/>
+        <jar href="nekohtml-0.9.5.jar"/>
+        <jar href="nekohtml.jar"/>
+        <jar href="swingx-2007_05_27.jar"/>
+        <jar href="xercesImpl-2.6.2.jar"/>
+        <jar href="xercesImpl.jar"/>
+        <jar href="xmlParserAPIs-2.6.2.jar"/>
+    </resources>
+    <application-desc main-class="Main"/>
+</jnlp>
