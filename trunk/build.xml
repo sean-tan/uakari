@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="uakari-deploy" default="jar">
+    <path id="classpath.uidesigner">
+        <fileset dir="lib/jetbrains">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2">
+        <classpath refid="classpath.uidesigner"/>
+    </taskdef>
+
+    <import file="uakari.xml"/>
+
+    <target name="jar" depends="all">
+        <mkdir dir="build"/>
+
+        <jar destfile="build/uakari.jar"
+             basedir="${uakari.output.dir}"/>
+    </target>
+</project>
