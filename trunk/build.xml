@@ -21,14 +21,16 @@
              basedir="${uakari.output.dir}"/>
     </target>
 
-    <target name="dist" depends="jar">
-
+    <target name="generate-cert">
+        <delete dir="private"/>
         <mkdir dir="private"/>
-        <delete file="private/keystore"/>
         <genkey alias="uakari" storepass="${keystorepass}" keystore="private/keystore"
                 dname="CN=uakari, OU=uakari, O=uakari, C=UK"/>
+    </target>
 
+    <target name="dist" depends="jar" description="create distribution">
         <mkdir dir="dist"/>
+        <delete file="dist/*.jar"/>
         <copy todir="dist">
             <fileset dir="lib/runtime">
                 <include name="*.jar"/>
