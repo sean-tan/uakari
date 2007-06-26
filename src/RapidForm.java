@@ -15,6 +15,8 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
 import java.io.File;
 
 public class RapidForm {
@@ -95,15 +97,23 @@ public class RapidForm {
         });
 
         passwordField.setText(settings.getPassword());
-        passwordField.addActionListener(new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+        passwordField.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent focusEvent) {
+
+            }
+
+            public void focusLost(FocusEvent focusEvent) {
                 settings.setPassword(new String(passwordField.getPassword()));
             }
         });
 
         usernameField.setText(settings.getUsername());
-        usernameField.addActionListener(new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+        usernameField.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent focusEvent) {
+                throw new UnsupportedOperationException();
+            }
+
+            public void focusLost(FocusEvent focusEvent) {
                 settings.setUsername(usernameField.getText());
             }
         });
