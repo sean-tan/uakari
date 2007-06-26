@@ -48,6 +48,9 @@ class RapidShareResourceFinder {
             }
             String fileMarker = "You want to download the file <b>";
             int startIndex = html.indexOf(fileMarker);
+            if(startIndex == -1)//not all rapdishare pages have this (such as a members homepage) - but most do
+                return url;
+
             String end = html.substring(startIndex + fileMarker.length(), html.length());
             int endIndex = end.indexOf("</b>");
             return end.substring(0, endIndex);

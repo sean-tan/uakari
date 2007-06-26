@@ -40,13 +40,13 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
             }
         });
 
-        addColumn(new TableColumn(Col.indexOf(Col.RAPIDSHARE_FILE), 500, striped(new DefaultTableCellRenderer()), new DefaultCellEditor(new JTextField())) {
+        addColumn(new TableColumn(Col.indexOf(Col.RAPIDSHARE_FILE), 100, striped(new DownloadFileCellRenderer()), new DefaultCellEditor(new JTextField())) {
             {
                 setHeaderValue(Col.RAPIDSHARE_FILE.toString().toLowerCase());
             }
         });
 
-        addColumn(new TableColumn(Col.indexOf(Col.PARENT_PAGE), 20, striped(new DefaultTableCellRenderer()), new DefaultCellEditor(new JTextField())) {
+        addColumn(new TableColumn(Col.indexOf(Col.PARENT_PAGE), 400, striped(new DefaultTableCellRenderer()), new DefaultCellEditor(new JTextField())) {
             {
                 setHeaderValue(Col.PARENT_PAGE.toString().toLowerCase());
             }
@@ -107,6 +107,18 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
                 progressBar.setValue((int) downloader.getDownloadedSoFar());
             }
             return progressBar;
+        }
+    }
+
+    private static class DownloadFileCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            String url = (String) value;
+            int index = url.lastIndexOf("/") + 1;
+            String filename = url.substring(index);
+            label.setText(filename);
+            label.setToolTipText(url);
+            return label;
         }
     }
 
