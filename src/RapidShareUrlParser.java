@@ -16,8 +16,15 @@ public class RapidShareUrlParser {
     }
 
     public void foreachUrlIn(List<String> pages, UrlHandler urlHandler) throws IOException {
-        for (String url : pages) {
-            audit.addMessage("Scanning " + url + " for rapidshare files");
+        for (String page : pages) {
+            try {
+                Thread.sleep(0);
+            } catch (InterruptedException e) {
+                System.err.println("stopped!");
+                return;
+            }
+
+            audit.addMessage("Scanning " + page + " for rapidshare files");
             try {
                 WebClient client = new WebClient(BrowserVersion.getDefault());
                 client.setJavaScriptEnabled(false);
@@ -26,7 +33,7 @@ public class RapidShareUrlParser {
                 client.setThrowExceptionOnScriptError(false);
                 client.setRefreshHandler(new WaitingRefreshHandler());
 
-                Page webResponse = client.getPage(url);
+                Page webResponse = client.getPage(page);
                 String s = webResponse.getWebResponse().getContentAsString();
                 if (s == null)//not sure why this happens
                     continue;
@@ -35,10 +42,10 @@ public class RapidShareUrlParser {
                 Matcher matcher = pattern.matcher(s);
                 while (matcher.find()) {
                     String urlEnd = matcher.group(1).replaceAll("%2F", "/");
-                    urlHandler.handle("http://" + urlEnd);
+                    urlHandler.handle(page, "http://" + urlEnd);
                 }
             } catch (Exception e) {
-                audit.addMessage("broken page: " + url);
+                audit.addMessage("broken page: " + page);
                 audit.addMessage(e);
             }
         }

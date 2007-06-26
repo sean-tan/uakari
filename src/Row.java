@@ -1,10 +1,12 @@
 class Row {
     private boolean downloading;
     private String url;
+    private final String parentPage;
 
-    public Row(boolean downloading, String url) {
+    public Row(boolean downloading, String url, String parentPage) {
         this.downloading = downloading;
         this.url = url;
+        this.parentPage = parentPage;
     }
 
     public void setDownloading(boolean downloading) {
@@ -15,8 +17,10 @@ class Row {
         switch (col) {
             case DOWNLOAD:
                 return downloading;
-            case FILE:
+            case RAPIDSHARE_FILE:
                 return url;
+            case PARENT_PAGE:
+                return parentPage;
             default:
                 throw new IllegalArgumentException("no data for column " + col);
         }

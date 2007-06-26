@@ -9,11 +9,11 @@ class TableModelSearchListener implements SearchListener {
         this.form = form;
     }
 
-    public void addSearchResult(String url) {
+    public void addSearchResult(String parentPage, String url) {
         if (!tableModel.containsUrl(url)) {
             try {
                 RapidShareResourceFinder.checkUrlValidity(url);
-                tableModel.add(new Row(false, url));
+                tableModel.add(new Row(false, url, parentPage));
             } catch (InvalidRapidshareUrlException e) {
                 audit.addMessage(e);
             }
