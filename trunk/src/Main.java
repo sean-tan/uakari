@@ -1,6 +1,9 @@
+import apple.laf.AquaLookAndFeel;
+import com.jgoodies.looks.LookUtils;
 import org.jdesktop.swingx.JXFrame;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 public class Main {
     /*
@@ -13,6 +16,9 @@ public class Main {
      */
 
     public static void main(String[] args) throws Exception {
+        UIManager.setLookAndFeel(new AquaLookAndFeel());
+        UIManager.put("ClassLoader", LookUtils.class.getClassLoader());
+        
         String homeDir = System.getenv().get("HOME");
         DownloadsColumnModel columnModel = new DownloadsColumnModel();
         String username = args.length >= 1 ? args[0] : "";

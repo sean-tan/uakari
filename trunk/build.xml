@@ -3,7 +3,7 @@
     <property file="private.properties"/>
 
     <path id="classpath.uidesigner">
-        <fileset dir="lib/jetbrains">
+        <fileset dir="lib/buildtime">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -28,7 +28,6 @@
         <genkey alias="uakari" storepass="${keystorepass}" keystore="private/keystore"
                 dname="CN=uakari, OU=uakari, O=uakari, C=UK"/>
 
-        <delete dir="dist"/>
         <mkdir dir="dist"/>
         <copy todir="dist">
             <fileset dir="lib/runtime">

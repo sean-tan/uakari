@@ -102,6 +102,6 @@ class RapidShareResourceFinder {
             }
         }
 
-        throw new InvalidRapidshareUrlException(url, "download could not start, wrong username?");
+        throw new InvalidRapidshareUrlException(url, "download could not start, wrong username ('" + settings.getUsername() + "')?");
     }
 }
