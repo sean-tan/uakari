@@ -31,16 +31,18 @@
         <delete dir="dist"/>
         <mkdir dir="dist"/>
         <copy todir="dist">
-            <fileset dir="lib">
+            <fileset dir="lib/runtime">
                 <include name="*.jar"/>
-                <exclude name="jetbrains"/>
             </fileset>
             <fileset file="build/uakari.jar"/>
         </copy>
 
-        <signjar alias="uakari" keystore="private/keystore"
+        <signjar alias="uakari" 
+                 keystore="private/keystore"
                  storepass="${keystorepass}"
-                 preservelastmodified="true" verbose="true">
+                 preservelastmodified="true"
+                 lazy="true"
+                 verbose="false">
             <path>
                 <fileset dir="dist" includes="*.jar"/>
             </path>

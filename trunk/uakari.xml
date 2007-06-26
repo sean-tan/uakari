@@ -61,25 +61,25 @@
   </path>
   
   <path id="uakari.module.classpath">
-    <pathelement location="${module.uakari.basedir}/lib/nekohtml-0.9.5.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/commons-lang-2.2.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/commons-io-1.3.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/jaxen-1.1.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/commons-logging-1.1.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/looks-2.0.4.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/xercesImpl-2.6.2.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/nekohtml.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/commons-httpclient-3.0.1.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/xercesImpl.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/commons-httpclient-3.1-beta1.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/htmlunit-1.11.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/xmlParserAPIs-2.6.2.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/commons-codec-1.3.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/js.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/swingx-2007_05_27.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/js-1.6R5.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/httpunit-1.6.2.jar"/>
-    <pathelement location="${module.uakari.basedir}/lib/commons-collections-3.2.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/jaxen-1.1.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/commons-httpclient-3.0.1.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/looks-2.0.4.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/js.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/nekohtml-0.9.5.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/httpunit-1.6.2.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/js-1.6R5.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/commons-collections-3.2.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/xercesImpl-2.6.2.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/commons-codec-1.3.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/htmlunit-1.11.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/commons-io-1.3.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/nekohtml.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/commons-httpclient-3.1-beta1.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/xercesImpl.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/swingx-2007_05_27.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/commons-lang-2.2.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/commons-logging-1.1.jar"/>
+    <pathelement location="${module.uakari.basedir}/lib/runtime/xmlParserAPIs-2.6.2.jar"/>
   </path>
   
   
