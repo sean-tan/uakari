@@ -34,6 +34,8 @@ class ThreadedSearcher implements Searcher {
                             addUrl(parentPage, url);
                         }
                     });
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 } catch (IOException e) {
                     audit.addMessage(e);
                 } finally {
@@ -52,6 +54,8 @@ class ThreadedSearcher implements Searcher {
                             addUrl(parentPage, url);
                         }
                     });
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 } catch (IOException e) {
                     audit.addMessage(e);
                 } finally {

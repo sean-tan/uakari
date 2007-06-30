@@ -7,9 +7,10 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Google {
-    public static List<String> searchFor(String text) throws IOException {
+    public static List<String> searchFor(String text) throws IOException, InterruptedException {
         String query = URLEncoder.encode(text, "UTF-8");
         WebClient client = new WebClient();
         HtmlPage webResponse = (HtmlPage) client.getPage("http://www.google.co.uk/search?num=20&hl=en&safe=off&q=" + query + "&btnG=Search&meta=");
@@ -17,6 +18,7 @@ public class Google {
         List<String> results = new ArrayList();
 
         for (HtmlHeader2 htmlHeader2 : h2List) {
+            TimeUnit.SECONDS.sleep(1);
             HtmlAnchor link = (HtmlAnchor) htmlHeader2.getHtmlElementsByTagName("a").get(0);
             results.add(link.getHrefAttribute());
         }

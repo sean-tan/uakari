@@ -1,9 +1,12 @@
+import org.xml.sax.SAXException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 public class Downloader implements Runnable {
 
@@ -14,7 +17,7 @@ public class Downloader implements Runnable {
     private double byteCount = 0;
     private long currentRate;
     public int length;
-    private boolean stopped = true;
+    private boolean isDownloading;
 
     public Downloader(RapidShareResourceFinder resourceFinder, String url, File dir, Audit audit) {
         this.resourceFinder = resourceFinder;
@@ -33,16 +36,20 @@ public class Downloader implements Runnable {
 
     public void run() {
         try {
-            this.stopped = false;
             download();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             audit.addMessage(e);
+        } finally {
+            isDownloading = false;
         }
     }
 
-    private void download() throws Exception {
+    private void download() throws InvalidRapidshareUrlException, IOException, SAXException, InterruptedException {
         resourceFinder.connect(url, new ResourceHandler() {
-            public void handleStream(int length, InputStream is, String url) throws IOException {
+            public void handleStream(int length, InputStream is, String url) throws IOException, InterruptedException {
+                isDownloading = true;
 
                 File file = new File(dir, url.substring(url.lastIndexOf("/") + 1));
                 Downloader.this.length = length;
@@ -57,7 +64,10 @@ public class Downloader implements Runnable {
                 FileWriter fileWriter = new FileWriter(file);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                 char[] chars = new char[1024 * 512];
-                while (byteCount < length && !stopped) {
+                while (byteCount < length) {
+
+                    TimeUnit.SECONDS.sleep(1);
+
                     int sizeRead = reader.read(chars);
                     if (sizeRead == -1) {
                         audit.addMessage("problem downloading " + url + ", " + (long) byteCount + "bytes read out of " + (long) length);
@@ -82,11 +92,7 @@ public class Downloader implements Runnable {
         return currentRate;
     }
 
-    public void stop() {
-        this.stopped = true;
-    }
-
-    public boolean hasStarted() {
-        return !stopped;
+    public boolean isDownloading() {
+        return isDownloading;
     }
 }

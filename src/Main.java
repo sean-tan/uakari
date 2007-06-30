@@ -17,6 +17,9 @@ public class Main {
 //        UIManager.put("ClassLoader", LookUtils.class.getClassLoader());
         
         String homeDir = System.getenv().get("HOME");
+        if(homeDir == null)
+            homeDir = System.getenv().get("HOMEPATH");
+        
         DownloadsColumnModel columnModel = new DownloadsColumnModel();
         String username = args.length >= 1 ? args[0] : "";
         String password = args.length >= 2 ? args[1] : "";
