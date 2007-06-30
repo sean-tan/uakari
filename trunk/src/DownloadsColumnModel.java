@@ -132,7 +132,7 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
             Boolean downloadChecked = (Boolean) table.getValueAt(row, Col.indexOf(Col.DOWNLOAD));
             if (downloader == null || !downloadChecked) {
                 label.setText("");
-            } else if (!downloader.hasStarted()) {
+            } else if (!downloader.isDownloading()) {
                 label.setText("queued");
             } else {
                 long downloadSizeInMB = downloader.getDownloadSize() / MEGABYTE;

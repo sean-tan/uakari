@@ -10,6 +10,9 @@ import com.meterware.httpunit.WebLink;
 import com.meterware.httpunit.WebResponse;
 
 import java.io.InputStream;
+import java.io.IOException;
+
+import org.xml.sax.SAXException;
 
 class RapidShareResourceFinder {
     private final Settings settings;
@@ -63,7 +66,7 @@ class RapidShareResourceFinder {
         }
     }
 
-    public void connect(String url, ResourceHandler resourceHandler) throws Exception {
+    public void connect(String url, ResourceHandler resourceHandler) throws IOException, SAXException, InvalidRapidshareUrlException, InterruptedException {
         WebClient client = new WebConversation();
         ClientProperties properties = client.getClientProperties();
         properties.setAcceptCookies(true);
@@ -95,7 +98,15 @@ class RapidShareResourceFinder {
                                         WebLink[] webLinks = downloadPage.getLinks();
                                         for (WebLink webLink : webLinks) {
                                             if (webLink.getText().startsWith("Download via")) {
-                                                WebResponse theData = webLink.click();
+                                                GetMethodWebRequest request = new GetMethodWebRequest(webLink.getURLString());
+//                                                String contentRange = "bytes=-500";
+//                                                request.setHeaderField("Range", contentRange);
+                                                WebResponse theData = client.getResource(request);
+
+                                                String[] names = theData.getHeaderFieldNames();
+                                                for (String name : names) {
+                                                    System.out.println(name + ": " + theData.getHeaderField(name));
+                                                }
                                                 int total = theData.getContentLength();
                                                 InputStream inputStream = theData.getInputStream();
                                                 resourceHandler.handleStream(total, inputStream, url);

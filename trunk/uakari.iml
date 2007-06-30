@@ -58,8 +58,12 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/runtime/httpunit-1.6.2.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
+        <JAVADOC>
+          <root url="http://httpunit.sourceforge.net/doc/api/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/sources/httpunit-1.6.2.src.zip!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">

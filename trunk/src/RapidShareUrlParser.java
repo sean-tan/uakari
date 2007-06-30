@@ -5,6 +5,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,14 +16,10 @@ public class RapidShareUrlParser {
         this.audit = audit;
     }
 
-    public void foreachUrlIn(List<String> pages, UrlHandler urlHandler) throws IOException {
+    public void foreachUrlIn(List<String> pages, UrlHandler urlHandler) throws IOException, InterruptedException {
         for (String page : pages) {
-            try {
-                Thread.sleep(0);
-            } catch (InterruptedException e) {
-                System.err.println("stopped!");
-                return;
-            }
+
+            TimeUnit.SECONDS.sleep(1);
 
             audit.addMessage("Scanning " + page + " for rapidshare files");
             try {
