@@ -35,4 +35,8 @@ class ProgressMonitor implements Runnable {
     public void start() {
         scheduledExecutorService.scheduleAtFixedRate(this, 0, 1, TimeUnit.SECONDS);
     }
+
+    public void stop() {
+        scheduledExecutorService.shutdownNow();
+    }
 }

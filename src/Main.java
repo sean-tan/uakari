@@ -1,6 +1,8 @@
 import org.jdesktop.swingx.JXFrame;
 
 import javax.swing.JFrame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Main {
     /*
@@ -26,10 +28,10 @@ public class Main {
         MutableSettings settings = new MutableSettings(homeDir, username, password);
         SwingAudit audit = new SwingAudit();
         RapidShareResourceFinder finder = new RapidShareResourceFinder(settings);
-        DownloadService service = new DownloadService(settings, audit, finder);
+        final DownloadService service = new DownloadService(settings, audit, finder);
         DownloadsTableModel tableModel = new DownloadsTableModel(columnModel, service);
         RapidForm form = new RapidForm(tableModel, columnModel, settings, audit);
-        ProgressMonitor progressMonitor = new ProgressMonitor(tableModel);
+        final ProgressMonitor progressMonitor = new ProgressMonitor(tableModel);
         progressMonitor.start();
 
         JXFrame frame = new JXFrame("uakari");
@@ -38,6 +40,12 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(1024, frame.getHeight());
         frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent windowEvent) {
+                progressMonitor.stop();
+                service.stop();
+            }
+        });
 
         RapidShareUrlParser urlParser = new RapidShareUrlParser(audit);
         ThreadedSearcher searcher = new ThreadedSearcher(urlParser, audit);
