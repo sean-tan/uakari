@@ -18,6 +18,7 @@ class DownloadService {
         this.resourceFinder = resourceFinder;
     }
 
+
     public Downloader getDownloader(String url) {
         return downloaders.get(url);
     }
@@ -37,4 +38,7 @@ class DownloadService {
             future.cancel(true);
     }
 
+    public void stop() {
+        executorService.shutdownNow();
+    }
 }
