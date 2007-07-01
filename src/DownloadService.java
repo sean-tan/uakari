@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 class DownloadService {
-    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(16);
     private final Map<String, Future> tasks = new ConcurrentHashMap<String, Future>();
     private final Map<String, Downloader> downloaders = new ConcurrentHashMap();
     private final Settings settings;
@@ -24,7 +24,7 @@ class DownloadService {
 
     public void startDownloading(String url) {
         Future future = tasks.get(url);
-        if ((future == null || future.isCancelled() || future.isDone())) {
+        if (future == null || future.isCancelled() || future.isDone()) {
             Downloader downloader = new Downloader(resourceFinder, url, settings.getDownloadPath(), audit);
             downloaders.put(url, downloader);
             tasks.put(url, executorService.submit(downloader));
@@ -33,7 +33,8 @@ class DownloadService {
 
     public void stopDownloading(String url) {
         Future future = tasks.remove(url);
-        future.cancel(true);
+        if(future != null)
+            future.cancel(true);
     }
 
 }
