@@ -8,11 +8,10 @@ import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebForm;
 import com.meterware.httpunit.WebLink;
 import com.meterware.httpunit.WebResponse;
-
-import java.io.InputStream;
-import java.io.IOException;
-
 import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 class RapidShareResourceFinder {
     private final Settings settings;
@@ -102,11 +101,6 @@ class RapidShareResourceFinder {
 //                                                String contentRange = "bytes=-500";
 //                                                request.setHeaderField("Range", contentRange);
                                                 WebResponse theData = client.getResource(request);
-
-                                                String[] names = theData.getHeaderFieldNames();
-                                                for (String name : names) {
-                                                    System.out.println(name + ": " + theData.getHeaderField(name));
-                                                }
                                                 int total = theData.getContentLength();
                                                 InputStream inputStream = theData.getInputStream();
                                                 resourceHandler.handleStream(total, inputStream, url);
