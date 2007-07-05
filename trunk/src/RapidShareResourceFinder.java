@@ -12,12 +12,18 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 class RapidShareResourceFinder {
+    private final Random random = new Random(System.currentTimeMillis());
     private final Settings settings;
+    private final Audit audit;
 
-    public RapidShareResourceFinder(Settings settings) {
+    public RapidShareResourceFinder(Settings settings, Audit audit) {
         this.settings = settings;
+        this.audit = audit;
     }
 
     private boolean hasParameter(String name, WebForm form) {
@@ -50,7 +56,7 @@ class RapidShareResourceFinder {
             }
             String fileMarker = "You want to download the file <b>";
             int startIndex = html.indexOf(fileMarker);
-            if(startIndex == -1)//not all rapdishare pages have this (such as a members homepage) - but most do
+            if (startIndex == -1)//not all rapdishare pages have this (such as a members homepage) - but most do
                 return url;
 
             String end = html.substring(startIndex + fileMarker.length(), html.length());
@@ -93,20 +99,27 @@ class RapidShareResourceFinder {
                                 WebForm[] downloadForms = loginResponsePage.getForms();
                                 for (WebForm downloadForm : downloadForms) {
                                     if (hasParameter("dl.start", downloadForm)) {
-                                        WebResponse downloadPage = downloadForm.submit();
-                                        WebLink[] webLinks = downloadPage.getLinks();
-                                        for (WebLink webLink : webLinks) {
-                                            if (webLink.getText().startsWith("Download via")) {
-                                                GetMethodWebRequest request = new GetMethodWebRequest(webLink.getURLString());
+                                        final WebResponse downloadPage = downloadForm.submit();
+                                        List<WebLink> downloadLocations = new ArrayList() {{
+                                            WebLink[] webLinks = downloadPage.getLinks();
+                                            for (WebLink webLink : webLinks) {
+                                                if (webLink.getText().startsWith("Download via")) {
+                                                    add(webLink);
+                                                }
+                                            }
+                                        }};
+
+                                        WebLink webLink = downloadLocations.get(Math.abs(random.nextInt() % downloadLocations.size()));
+                                        audit.addMessage(webLink.getText());
+                                        String urlString = webLink.getURLString();
+                                        GetMethodWebRequest request = new GetMethodWebRequest(urlString);
 //                                                String contentRange = "bytes=-500";
 //                                                request.setHeaderField("Range", contentRange);
-                                                WebResponse theData = client.getResource(request);
-                                                int total = theData.getContentLength();
-                                                InputStream inputStream = theData.getInputStream();
-                                                resourceHandler.handleStream(total, inputStream, url);
-                                                return;
-                                            }
-                                        }
+                                        WebResponse theData = client.getResource(request);
+                                        int total = theData.getContentLength();
+                                        InputStream inputStream = theData.getInputStream();
+                                        resourceHandler.handleStream(total, inputStream, url);
+                                        return;
                                     }
                                 }
                             }
