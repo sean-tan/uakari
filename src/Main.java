@@ -27,7 +27,7 @@ public class Main {
         String password = args.length >= 2 ? args[1] : "";
         MutableSettings settings = new MutableSettings(homeDir, username, password);
         SwingAudit audit = new SwingAudit();
-        RapidShareResourceFinder finder = new RapidShareResourceFinder(settings);
+        RapidShareResourceFinder finder = new RapidShareResourceFinder(settings,audit);
         final DownloadService service = new DownloadService(settings, audit, finder);
         DownloadsTableModel tableModel = new DownloadsTableModel(columnModel, service);
         RapidForm form = new RapidForm(tableModel, columnModel, settings, audit);
