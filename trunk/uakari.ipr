@@ -278,6 +278,21 @@
     <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="StarteamVcsAdapter" />
+  <component name="TestDox.ConfigurationController">
+    <option name="allowCustomPackages" value="false" />
+    <option name="testNameTemplate" value="&lt;classname&gt;Test" />
+    <option name="alphabeticalSorting" value="false" />
+    <option name="createTestIfMissing" value="true" />
+    <option name="underscoreMode" value="false" />
+    <option name="showFullyQualifiedClassName" value="false" />
+    <option name="autoscrolling" value="false" />
+    <option name="autoApplyChangesToTests" value="true" />
+    <option name="deletePackageOccurrences" value="true" />
+    <option name="testMethodPrefix" value="test" />
+    <option name="testMethodAnnotation" />
+    <option name="usingAnnotations" value="false" />
+    <custom-packaging allow="false" />
+  </component>
   <component name="VssVcs" />
   <component name="com.intellij.jsf.UserDefinedFacesConfigs">
     <option name="USER_DEFINED_CONFIGS">

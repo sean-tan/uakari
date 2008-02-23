@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 //        UIManager.setLookAndFeel(new AquaLookAndFeel());
 //        UIManager.put("ClassLoader", LookUtils.class.getClassLoader());
-        
+        //
         String homeDir = System.getenv().get("HOME");
         if(homeDir == null)
             homeDir = System.getenv().get("HOMEPATH");
