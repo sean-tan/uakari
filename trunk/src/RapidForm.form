@@ -150,7 +150,9 @@
                       </grid>
                       <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="0.0"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <text value="http://"/>
+                    </properties>
                   </component>
                   <component id="fcd56" class="javax.swing.JTextField" binding="searchField">
                     <constraints>

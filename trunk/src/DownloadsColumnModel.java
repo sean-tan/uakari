@@ -17,7 +17,7 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
     enum Col {
         DOWNLOAD, RAPIDSHARE_FILE, PARENT_PAGE, SIZE, PROGRESS;
 
-        private static final Map<Col, Integer> indexes = new HashMap() {
+        private static final Map<Col, Integer> indexes = new HashMap<Col, Integer>() {
             {
                 Col[] cols = Col.values();
                 for (int i = 0; i < cols.length; i++) {

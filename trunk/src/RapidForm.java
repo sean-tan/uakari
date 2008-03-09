@@ -13,10 +13,10 @@ import javax.swing.table.TableColumnModel;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
 import java.io.File;
 
 public class RapidForm {
@@ -111,11 +111,23 @@ public class RapidForm {
         usernameField.setText(settings.getUsername());
         usernameField.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent focusEvent) {
-                throw new UnsupportedOperationException();
+                if(urlField.getText().equals("http://")) {
+                    urlField.setSelectionStart(0);
+                    urlField.setSelectionEnd(urlField.getText().length() - 1);
+                }
             }
 
             public void focusLost(FocusEvent focusEvent) {
                 settings.setUsername(usernameField.getText());
+            }
+        });
+
+        urlField.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+
+            }
+
+            public void focusLost(FocusEvent e) {
             }
         });
     }
