@@ -100,7 +100,7 @@ class RapidShareResourceFinder {
                                 for (WebForm downloadForm : downloadForms) {
                                     if (hasParameter("dl.start", downloadForm)) {
                                         final WebResponse downloadPage = downloadForm.submit();
-                                        List<WebLink> downloadLocations = new ArrayList() {{
+                                        List<WebLink> downloadLocations = new ArrayList<WebLink>() {{
                                             WebLink[] webLinks = downloadPage.getLinks();
                                             for (WebLink webLink : webLinks) {
                                                 if (webLink.getText().startsWith("Download via")) {
