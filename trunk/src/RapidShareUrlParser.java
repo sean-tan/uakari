@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 public class RapidShareUrlParser {
     private final Audit audit;
+    private static final Pattern URL_GUESS_PATTERN = Pattern.compile("(rapidshare.com(/|%2F)[^\\s|>|<|\"|\\(|\\)|\\\\]+)", Pattern.MULTILINE);
 
     public RapidShareUrlParser(Audit audit) {
         this.audit = audit;
@@ -19,7 +20,7 @@ public class RapidShareUrlParser {
     public void foreachUrlIn(List<String> pages, UrlHandler urlHandler) throws IOException, InterruptedException {
         for (String page : pages) {
 
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.MICROSECONDS.sleep(1);
 
             audit.addMessage("Scanning " + page + " for rapidshare files");
             try {
@@ -31,12 +32,8 @@ public class RapidShareUrlParser {
                 client.setRefreshHandler(new WaitingRefreshHandler());
 
                 Page webResponse = client.getPage(page);
-                String s = webResponse.getWebResponse().getContentAsString();
-                if (s == null)//not sure why this happens
-                    continue;
-
-                Pattern pattern = Pattern.compile("(rapidshare.com(/|%2F)[^\\s|>|<|\"|\\(|\\)|\\\\]+)", Pattern.MULTILINE);
-                Matcher matcher = pattern.matcher(s);
+                String pageSource = new String(webResponse.getWebResponse().getResponseBody());
+                Matcher matcher = URL_GUESS_PATTERN.matcher(pageSource);
                 while (matcher.find()) {
                     String urlEnd = matcher.group(1).replaceAll("%2F", "/");
                     urlHandler.handle(page, "http://" + urlEnd);
