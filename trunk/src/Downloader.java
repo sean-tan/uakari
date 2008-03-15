@@ -18,6 +18,7 @@ public class Downloader implements Runnable {
     private long currentRate;
     public int length;
     private boolean isDownloading;
+    public static final int READ_TIME = 1;
 
     public Downloader(RapidShareResourceFinder resourceFinder, String url, File dir, Audit audit) {
         this.resourceFinder = resourceFinder;
@@ -47,45 +48,42 @@ public class Downloader implements Runnable {
     }
 
     private void download() throws InvalidRapidshareUrlException, IOException, SAXException, InterruptedException {
-        resourceFinder.connect(url, new ResourceHandler() {
-            public void handleStream(int length, InputStream is, String url) throws IOException, InterruptedException {
+        final File file = new File(dir, url.substring(url.lastIndexOf("/") + READ_TIME));
+        long startingByte = file.length();
+        byteCount = startingByte;
+        resourceFinder.connect(url, startingByte, new ResourceHandler() {
+            public void handleStream(int length, InputStream is, String url) throws InterruptedException {
                 isDownloading = true;
 
-                File file = new File(dir, url.substring(url.lastIndexOf("/") + 1));
-                Downloader.this.length = length;
-                byteCount = 0;
-                if (file.exists() && file.length() == length) {
-                    byteCount = length;
-                    return;
-                } else if (file.exists()) {
-                    file.delete();
-                }
+                try {
+                    Downloader.this.length = length;
 
-                FileWriter fileWriter = new FileWriter(file);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                char[] chars = new char[1024 * 512];
-                while (byteCount < length) {
+                    FileWriter fileWriter = new FileWriter(file, true);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    char[] chars = new char[1024 * 64];
+                    while (byteCount < length) {
+                        TimeUnit.SECONDS.sleep(READ_TIME);
 
-                    TimeUnit.SECONDS.sleep(1);
-
-                    int sizeRead = reader.read(chars);
-                    if (sizeRead == -1) {
-                        audit.addMessage("problem downloading " + url + ", " + (long) byteCount + "bytes read out of " + (long) length);
-                        break;
+                        int sizeRead = reader.read(chars);
+                        currentRate = sizeRead;
+                        if (sizeRead == -READ_TIME) {
+                            audit.addMessage("problem downloading " + url + ", " + (long) byteCount + "bytes read out of " + (long) length);
+                            break;
+                        }
+                        fileWriter.write(chars, 0, sizeRead);
+                        byteCount += sizeRead;
                     }
-                    fileWriter.write(chars, 0, sizeRead);
-                    byteCount += sizeRead;
-                }
 
-                fileWriter.flush();
-                fileWriter.close();
-                is.close();
+                    fileWriter.flush();
+                    fileWriter.close();
+                    is.close();
+                } catch (IOException e) {
+                    throw new Bug("Cannot write to " + file.getAbsolutePath(), e);
+                } finally {
+                    isDownloading = false;
+                }
             }
         });
-    }
-
-    public void setCurrentRate(long currentRate) {
-        this.currentRate = currentRate;
     }
 
     public long getCurrentRate() {

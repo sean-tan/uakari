@@ -71,7 +71,7 @@ class RapidShareResourceFinder {
         }
     }
 
-    public void connect(String url, ResourceHandler resourceHandler) throws IOException, SAXException, InvalidRapidshareUrlException, InterruptedException {
+    public void connect(String url, long startingByte, ResourceHandler resourceHandler) throws IOException, SAXException, InvalidRapidshareUrlException, InterruptedException {
         WebClient client = new WebConversation();
         ClientProperties properties = client.getClientProperties();
         properties.setAcceptCookies(true);
@@ -91,7 +91,6 @@ class RapidShareResourceFinder {
                         WebForm[] loginForms = loginPage.getForms();
                         for (WebForm loginForm : loginForms) {
                             if (loginForm.getAction().equals("/cgi-bin/premium.cgi") && hasParameter("accountid", loginForm)) {
-
                                 loginForm.setParameter("accountid", settings.getUsername());
                                 loginForm.setParameter("password", settings.getPassword());
 
@@ -100,21 +99,23 @@ class RapidShareResourceFinder {
                                 for (WebForm downloadForm : downloadForms) {
                                     if (hasParameter("dl.start", downloadForm)) {
                                         final WebResponse downloadPage = downloadForm.submit();
-                                        List<WebLink> downloadLocations = new ArrayList<WebLink>() {{
-                                            WebLink[] webLinks = downloadPage.getLinks();
-                                            for (WebLink webLink : webLinks) {
-                                                if (webLink.getText().startsWith("Download via")) {
-                                                    add(webLink);
+                                        List<WebLink> downloadLocations = new ArrayList<WebLink>() {
+                                            {
+                                                WebLink[] webLinks = downloadPage.getLinks();
+                                                for (WebLink webLink : webLinks) {
+                                                    if (webLink.getText().startsWith("Download via")) {
+                                                        add(webLink);
+                                                    }
                                                 }
                                             }
-                                        }};
+                                        };
 
                                         WebLink webLink = downloadLocations.get(Math.abs(random.nextInt() % downloadLocations.size()));
                                         audit.addMessage(webLink.getText());
                                         String urlString = webLink.getURLString();
                                         GetMethodWebRequest request = new GetMethodWebRequest(urlString);
-//                                                String contentRange = "bytes=-500";
-//                                                request.setHeaderField("Range", contentRange);
+                                        String contentRange = "bytes=" +startingByte + "-";
+                                        request.setHeaderField("Range", contentRange);
                                         WebResponse theData = client.getResource(request);
                                         int total = theData.getContentLength();
                                         InputStream inputStream = theData.getInputStream();
