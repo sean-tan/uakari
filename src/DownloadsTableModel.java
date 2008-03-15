@@ -13,7 +13,7 @@ class DownloadsTableModel implements TableModel {
     private final DownloadsColumnModel columnModel;
     private final DownloadService downloadService;
     private final List<Row> data = new ArrayList<Row>();
-    private final Set<String> urls = new HashSet();
+    private final Set<String> urls = new HashSet<String>();
     private final List<TableModelListener> listeners = new ArrayList<TableModelListener>();
     private final Set<Integer> downloaders = new CopyOnWriteArraySet<Integer>();
 

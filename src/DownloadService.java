@@ -5,9 +5,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 class DownloadService {
-    private final ExecutorService executorService = Executors.newFixedThreadPool(16);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final Map<String, Future> tasks = new ConcurrentHashMap<String, Future>();
-    private final Map<String, Downloader> downloaders = new ConcurrentHashMap();
+    private final Map<String, Downloader> downloaders = new ConcurrentHashMap<String, Downloader>();
     private final Settings settings;
     private final Audit audit;
     private final RapidShareResourceFinder resourceFinder;
