@@ -19,6 +19,7 @@ public class Downloader implements Runnable {
     public int length;
     private boolean isDownloading;
     public static final int READ_TIME = 1;
+    private boolean complete;
 
     public Downloader(RapidShareResourceFinder resourceFinder, String url, File dir, Audit audit) {
         this.resourceFinder = resourceFinder;
@@ -42,8 +43,6 @@ public class Downloader implements Runnable {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
             audit.addMessage(e);
-        } finally {
-            isDownloading = false;
         }
     }
 
@@ -74,6 +73,7 @@ public class Downloader implements Runnable {
                         byteCount += sizeRead;
                     }
 
+                    complete = true;
                     fileWriter.flush();
                     fileWriter.close();
                     is.close();
@@ -92,5 +92,9 @@ public class Downloader implements Runnable {
 
     public boolean isDownloading() {
         return isDownloading;
+    }
+
+    public boolean isComplete() {
+        return complete;
     }
 }
