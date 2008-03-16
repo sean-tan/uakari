@@ -116,12 +116,16 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             String url = (String) value;
-            int index = url.lastIndexOf("/") + 1;
-            String filename = url.substring(index);
+            String filename = filenameFromUrl(url);
             label.setText(filename);
             label.setToolTipText(url);
             return label;
         }
+
+    }
+
+    public static String filenameFromUrl(String url) {
+        return url.substring(url.lastIndexOf("/") + 1);
     }
 
     private static class DownloadSizeCellRenderer extends DefaultTableCellRenderer {

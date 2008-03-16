@@ -7,21 +7,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 
 class DownloadService {
-    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
     private final Map<String, Future> tasks = new ConcurrentHashMap<String, Future>();
     private final Map<String, Downloader> downloaders = new ConcurrentHashMap<String, Downloader>();
+    private final ScheduledExecutorService scheduledExecutorService;
     private final Settings settings;
     private final Audit audit;
-    private final RapidShareResourceFinder resourceFinder;
 
-    public DownloadService(Settings settings, Audit audit, RapidShareResourceFinder resourceFinder) {
+    public DownloadService(ScheduledExecutorService scheduledExecutorService, Settings settings, Audit audit) {
+        this.scheduledExecutorService = scheduledExecutorService;
         this.settings = settings;
         this.audit = audit;
-        this.resourceFinder = resourceFinder;
     }
-
 
     public Downloader getDownloader(String url) {
         return downloaders.get(url);
@@ -30,14 +30,15 @@ class DownloadService {
     public void startDownloading(final String url) {
         Future future = tasks.get(url);
         if (future == null) {
-            final Downloader downloader = new Downloader(resourceFinder, url, settings.getDownloadPath());
+            RapidShareResourceFinder finder = new RapidShareResourceFinder(scheduledExecutorService, settings, audit);
+            final Downloader downloader = new Downloader(scheduledExecutorService, finder, url, settings.getDownloadPath());
             downloaders.put(url, downloader);
             future = executorService.submit(new Runnable() {
                 public void run() {
                     try {
                         downloader.download();
                     } catch (InterruptedException e) {
-                        //cool - must have been cancelled by the user
+                        downloader.stop();
                     } catch (Exception e) {
                         audit.addMessage(e);
                     } finally {
@@ -72,7 +73,7 @@ class DownloadService {
         file.close();
 
 
-        RandomAccessFile file2 = new RandomAccessFile(name, "r");
+        RandomAccessFile file2 = new RandomAccessFile("/Users/nickpomfret/Lesbian_Bridal_Stories_vol_1.part03.rar.html", "r");
         int i;
         int count = 0;
         while((i = file2.read()) != -1) {

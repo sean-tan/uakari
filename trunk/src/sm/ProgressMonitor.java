@@ -1,15 +1,17 @@
 package sm;
 
 import javax.swing.event.TableModelEvent;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 class ProgressMonitor implements Runnable {
-    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService scheduledExecutorService;
     private final DownloadsTableModel model;
+    private ScheduledFuture<?> scheduledFuture;
 
-    public ProgressMonitor(DownloadsTableModel downloadsTableModel) {
+    public ProgressMonitor(ScheduledExecutorService scheduledExecutorService, DownloadsTableModel downloadsTableModel) {
+        this.scheduledExecutorService = scheduledExecutorService;
         this.model = downloadsTableModel;
     }
 
@@ -23,10 +25,10 @@ class ProgressMonitor implements Runnable {
     }
 
     public void start() {
-        scheduledExecutorService.scheduleAtFixedRate(this, 0, Downloader.READ_TIME, TimeUnit.SECONDS);
+        scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(this, 0, Downloader.READ_TIME, TimeUnit.SECONDS);
     }
 
     public void stop() {
-        scheduledExecutorService.shutdownNow();
+        scheduledFuture.cancel(true);
     }
 }

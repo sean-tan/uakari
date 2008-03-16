@@ -15,15 +15,21 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 class RapidShareResourceFinder {
     private final Random random = new Random(System.currentTimeMillis());
+    private final ExecutorService executor;
     private final Settings settings;
     private final Audit audit;
+    private final List<Future> list = new ArrayList<Future>();
 
-    public RapidShareResourceFinder(Settings settings, Audit audit) {
+    public RapidShareResourceFinder(ExecutorService executor, Settings settings, Audit audit) {
+        this.executor = executor;
         this.settings = settings;
         this.audit = audit;
     }
@@ -73,7 +79,7 @@ class RapidShareResourceFinder {
         }
     }
 
-    public void connect(String url, long startingByte, ResourceHandler resourceHandler) throws IOException, InvalidRapidshareUrlException, InterruptedException {
+    public void connect(String url, ResourceHandler... resourceHandlers) throws IOException, InvalidRapidshareUrlException, InterruptedException {
         try {
             WebClient client = new WebConversation();
             ClientProperties properties = client.getClientProperties();
@@ -120,18 +126,18 @@ class RapidShareResourceFinder {
                                             GetMethodWebRequest request = new GetMethodWebRequest(urlString);
                                             int total = client.getResource(request).getContentLength();
 
-                                            resourceHandler.setTotal(total);
-
-                                            if(total == startingByte)
-                                                return;
-
-                                            GetMethodWebRequest request2 = new GetMethodWebRequest(urlString);
-                                            request2.setHeaderField("Range", "bytes=" +startingByte + "-");
-                                            InputStream inputStream = client.getResource(request2).getInputStream();
-                                            try {
-                                                resourceHandler.handleStream(inputStream, url);
-                                            } finally {
-                                                inputStream.close();
+                                            long startingByte = 0;
+                                            int pieceSize = total / resourceHandlers.length;
+                                            long endByte = 0;
+                                            for (int i = 0; i < resourceHandlers.length; i++) {
+                                                endByte += pieceSize;
+                                                if (i == resourceHandlers.length - 1 && isOdd(total)) {
+                                                    endByte++;
+                                                }
+                                                ResourceHandler resourceHandler = resourceHandlers[i];
+                                                resourceHandler.setTotal(total);
+                                                handleStreamPart(urlString, startingByte, endByte, client, resourceHandler);
+                                                startingByte = endByte;
                                             }
                                             return;
                                         }
@@ -146,6 +152,42 @@ class RapidShareResourceFinder {
             throw new InvalidRapidshareUrlException(url, "download could not start, wrong username ('" + settings.getUsername() + "')?");
         } catch (SAXException e) {
             throw new Bug("Should not happen", e);
+        }
+    }
+
+    private boolean isOdd(int total) {
+        return total % 2 == 1;
+    }
+
+    private void handleStreamPart(final String urlString, final long startingByte, final long endByte, final WebClient client, final ResourceHandler resourceHandler) throws IOException, InterruptedException {
+        list.add(executor.submit(new Runnable() {
+            public void run() {
+                try {
+                    GetMethodWebRequest request = new GetMethodWebRequest(urlString);
+                    String range = "bytes=" + startingByte + "-" + endByte;
+                    request.setHeaderField("Range", range);
+                    WebResponse webResponse = client.getResource(request);
+                    InputStream inputStream = webResponse.getInputStream();
+                    try {
+                        resourceHandler.handleStream(inputStream, startingByte);
+                    } catch (InterruptedException e) {
+                        System.err.println(e.getMessage());
+                    } finally {
+                        inputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        }));
+    }
+
+    public void cancel() {
+        Iterator<Future> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            Future future = iterator.next();
+            future.cancel(true);
+            iterator.remove();
         }
     }
 }
