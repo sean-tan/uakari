@@ -43,22 +43,25 @@ public class Downloader {
         long startingByte = file.length();
         byteCount = startingByte;
         resourceFinder.connect(url, startingByte, new ResourceHandler() {
-            public void handleStream(int totalLength, InputStream is, String url) throws InterruptedException {
+            public void setTotal(int total) {
+                length = total;
+            }
+
+            public void handleStream(InputStream is, String url) throws InterruptedException {
                 isDownloading = true;
 
                 try {
-                    Downloader.this.length = totalLength;
 
                     FileWriter fileWriter = new FileWriter(file, true);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                     char[] chars = new char[DownloadsTableModel.KILOBYTE * 128];
-                    while (byteCount < totalLength) {
+                    while (byteCount < Downloader.this.length) {
                         TimeUnit.SECONDS.sleep(READ_TIME);
 
                         int sizeRead = reader.read(chars);
                         currentRate = sizeRead;
-                        if (sizeRead == -READ_TIME) {
-                            audit.addMessage("problem downloading " + url + ", " + (long) byteCount + "bytes read out of " + (long) totalLength);
+                        if (sizeRead == -1) {
+                            audit.addMessage("problem downloading " + url + ", " + byteCount + "bytes read out of " + length);
                             break;
                         }
                         fileWriter.write(chars, 0, sizeRead);
