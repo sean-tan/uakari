@@ -51,7 +51,7 @@ class DownloadService {
 
     public void stopDownloading(String url) {
         Future future = tasks.get(url);
-        if(future != null)
+        if (future != null)
             future.cancel(true);
     }
 
@@ -62,13 +62,22 @@ class DownloadService {
     public static void main(String[] args) throws Exception {
         String name = "foo.txt";
         new File(name).delete();
-        
+
         RandomAccessFile file = new RandomAccessFile(name, "rw");
-        file.setLength(1024);
+        file.setLength(40);
+        file.seek(5);
+        file.writeBytes("hello");
         file.seek(20);
-        file.writeChars("hello");
-        file.seek(40);
         file.writeChars("world");
         file.close();
+
+
+        RandomAccessFile file2 = new RandomAccessFile(name, "r");
+        int i;
+        int count = 0;
+        while((i = file2.read()) != -1) {
+            System.out.println(count++ + ": " + i);
+        }
+        file2.close();
     }
 }
