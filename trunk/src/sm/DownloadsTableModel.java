@@ -13,6 +13,8 @@ class DownloadsTableModel implements TableModel {
     private final DownloadService downloadService;
     private final List<Row> data = new ArrayList<Row>();
     private final List<TableModelListener> listeners = new ArrayList<TableModelListener>();
+    public static final int KILOBYTE = 1024;
+    public static final int MEGABYTE = KILOBYTE * KILOBYTE;
 
     public DownloadsTableModel(DownloadsColumnModel columnModel, DownloadService downloadService) {
         this.columnModel = columnModel;

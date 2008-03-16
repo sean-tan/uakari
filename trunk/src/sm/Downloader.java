@@ -51,7 +51,7 @@ public class Downloader {
 
                     FileWriter fileWriter = new FileWriter(file, true);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    char[] chars = new char[1024 * 64];
+                    char[] chars = new char[DownloadsTableModel.KILOBYTE * 128];
                     while (byteCount < totalLength) {
                         TimeUnit.SECONDS.sleep(READ_TIME);
 
