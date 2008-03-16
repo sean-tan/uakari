@@ -62,7 +62,6 @@ public class Downloader {
 
                     fileWriter.flush();
                     fileWriter.close();
-                    is.close();
                 } catch (IOException e) {
                     throw new Bug("Cannot write to " + file.getAbsolutePath(), e);
                 } finally {

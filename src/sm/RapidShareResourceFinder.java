@@ -127,7 +127,11 @@ class RapidShareResourceFinder {
                                         GetMethodWebRequest request2 = new GetMethodWebRequest(urlString);
                                         request2.setHeaderField("Range", "bytes=" +startingByte + "-");
                                         InputStream inputStream = client.getResource(request2).getInputStream();
-                                        resourceHandler.handleStream(inputStream, url);
+                                        try {
+                                            resourceHandler.handleStream(inputStream, url);
+                                        } finally {
+                                            inputStream.close();
+                                        }
                                         return;
                                     }
                                 }
