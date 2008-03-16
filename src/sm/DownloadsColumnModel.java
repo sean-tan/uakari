@@ -125,8 +125,6 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
     }
 
     private static class DownloadSizeCellRenderer extends DefaultTableCellRenderer {
-        private static final int KILOBYTE = 1024;
-        private static final int MEGABYTE = KILOBYTE * KILOBYTE;
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -139,9 +137,9 @@ class DownloadsColumnModel extends DefaultTableColumnModel {
             } else if (!downloader.isDownloading()) {
                 label.setText("queued");
             } else {
-                long downloadSizeInMB = downloader.getDownloadSize() / MEGABYTE;
-                long currentSizeInMB = downloader.getDownloadedSoFar() / MEGABYTE;
-                label.setText(currentSizeInMB + "Mb / " + downloadSizeInMB + "Mb (" + (downloader.getCurrentRate() / KILOBYTE) + "Kb/s)");
+                long downloadSizeInMB = downloader.getDownloadSize() / DownloadsTableModel.MEGABYTE;
+                long currentSizeInMB = downloader.getDownloadedSoFar() / DownloadsTableModel.MEGABYTE;
+                label.setText(currentSizeInMB + "Mb / " + downloadSizeInMB + "Mb (" + (downloader.getCurrentRate() / DownloadsTableModel.KILOBYTE) + "Kb/s)");
             }
             return label;
         }

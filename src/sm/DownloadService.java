@@ -1,5 +1,7 @@
 package sm;
 
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -55,5 +57,18 @@ class DownloadService {
 
     public void stop() {
         executorService.shutdownNow();
+    }
+
+    public static void main(String[] args) throws Exception {
+        String name = "foo.txt";
+        new File(name).delete();
+        
+        RandomAccessFile file = new RandomAccessFile(name, "rw");
+        file.setLength(1024);
+        file.seek(20);
+        file.writeChars("hello");
+        file.seek(40);
+        file.writeChars("world");
+        file.close();
     }
 }
