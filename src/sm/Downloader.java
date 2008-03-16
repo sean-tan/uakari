@@ -14,20 +14,17 @@ public class Downloader {
 
     private final String url;
     private final File dir;
-    private final Audit audit;
     private final RapidShareResourceFinder resourceFinder;
     private double byteCount = 0;
     private long currentRate;
     public int length;
     private boolean isDownloading;
     public static final int READ_TIME = 1;
-    private boolean complete;
 
-    public Downloader(RapidShareResourceFinder resourceFinder, String url, File dir, Audit audit) {
+    public Downloader(RapidShareResourceFinder resourceFinder, String url, File dir) {
         this.resourceFinder = resourceFinder;
         this.url = url;
         this.dir = dir;
-        this.audit = audit;
     }
 
     public long getDownloadSize() {
@@ -55,20 +52,14 @@ public class Downloader {
                     FileWriter fileWriter = new FileWriter(file, true);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                     char[] chars = new char[DownloadsTableModel.KILOBYTE * 128];
-                    while (byteCount < Downloader.this.length) {
+                    int sizeRead;
+                    while ((sizeRead = reader.read(chars)) != -1) {
                         TimeUnit.SECONDS.sleep(READ_TIME);
-
-                        int sizeRead = reader.read(chars);
                         currentRate = sizeRead;
-                        if (sizeRead == -1) {
-                            audit.addMessage("problem downloading " + url + ", " + byteCount + "bytes read out of " + length);
-                            break;
-                        }
                         fileWriter.write(chars, 0, sizeRead);
                         byteCount += sizeRead;
                     }
 
-                    complete = true;
                     fileWriter.flush();
                     fileWriter.close();
                     is.close();
@@ -90,6 +81,6 @@ public class Downloader {
     }
 
     public boolean isComplete() {
-        return complete;
+        return length == byteCount;
     }
 }

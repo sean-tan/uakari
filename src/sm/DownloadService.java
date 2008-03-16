@@ -30,7 +30,7 @@ class DownloadService {
     public void startDownloading(final String url) {
         Future future = tasks.get(url);
         if (future == null) {
-            final Downloader downloader = new Downloader(resourceFinder, url, settings.getDownloadPath(), audit);
+            final Downloader downloader = new Downloader(resourceFinder, url, settings.getDownloadPath());
             downloaders.put(url, downloader);
             future = executorService.submit(new Runnable() {
                 public void run() {
