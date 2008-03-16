@@ -1,3 +1,5 @@
+package sm;
+
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;

@@ -1,3 +1,5 @@
+package sm;
+
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WaitingRefreshHandler;

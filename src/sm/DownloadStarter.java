@@ -1,3 +1,5 @@
+package sm;
+
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -11,10 +13,10 @@ class DownloadStarter implements TableModelListener {
     }
 
     public void tableChanged(TableModelEvent tableModelEvent) {
-        if (tableModelEvent.getColumn() == 0) {
+        if (tableModelEvent.getColumn() == DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.DOWNLOAD)) {
             int row = tableModelEvent.getFirstRow();
-            String url = (String) tableModel.getValueAt(row, 1);
-            Boolean flag = (Boolean) tableModel.getValueAt(row, 0);
+            String url = (String) tableModel.getValueAt(row, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.RAPIDSHARE_FILE));
+            Boolean flag = (Boolean) tableModel.getValueAt(row, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.DOWNLOAD));
             if (flag)
                 service.startDownloading(url);
             else

@@ -1,3 +1,5 @@
+package sm;
+
 public interface Searcher {
     void searchWeb(String query);
 

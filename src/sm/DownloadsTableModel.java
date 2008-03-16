@@ -1,21 +1,18 @@
+package sm;
+
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 class DownloadsTableModel implements TableModel {
     private final DownloadsColumnModel columnModel;
     private final DownloadService downloadService;
     private final List<Row> data = new ArrayList<Row>();
-    private final Set<String> urls = new HashSet<String>();
     private final List<TableModelListener> listeners = new ArrayList<TableModelListener>();
-    private final Set<Integer> downloaders = new CopyOnWriteArraySet<Integer>();
 
     public DownloadsTableModel(DownloadsColumnModel columnModel, DownloadService downloadService) {
         this.columnModel = columnModel;
@@ -77,9 +74,6 @@ class DownloadsTableModel implements TableModel {
         Row row = data.get(rowIndex);
         row.setDownloading(flag);
         notifyListeners(new TableModelEvent(this, rowIndex, rowIndex, colIndex, TableModelEvent.UPDATE));
-
-        if (flag)
-            this.downloaders.add(rowIndex);
     }
 
     public void addTableModelListener(TableModelListener tableModelListener) {
@@ -97,7 +91,6 @@ class DownloadsTableModel implements TableModel {
 
     public void add(Row row) {
         this.data.add(row);
-        urls.add(row.getUrl());
         notifyListeners(new TableModelEvent(this, data.size(), data.size(), TableModelEvent.ALL_COLUMNS, TableModelEvent.INSERT));
     }
 
@@ -112,15 +105,16 @@ class DownloadsTableModel implements TableModel {
     }
 
     public boolean containsUrl(String url) {
-        return urls.contains(url);
+        return downloadService.getDownloader(url) != null;
     }
 
     public void foreachDownloader(DownloadsTableModel.DownloaderVisitor downloaderVisitor) {
-        for (Integer rowIndex : downloaders) {
-            String url = (String) getValueAt(rowIndex, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.RAPIDSHARE_FILE));
-            Downloader downloader = (Downloader) getValueAt(rowIndex, DownloadsColumnModel.Col.indexOf(DownloadsColumnModel.Col.PROGRESS));
+        for (int i = 0; i < getRowCount(); i++) {
+            Row row = data.get(i);
+            String url = row.getUrl();
+            Downloader downloader = downloadService.getDownloader(url);
             if (downloader != null)
-                downloaderVisitor.visit(downloader, url, rowIndex);
+                downloaderVisitor.visit(downloader, url, i);
         }
     }
 

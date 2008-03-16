@@ -1,3 +1,5 @@
+package sm;
+
 class TableModelSearchListener implements SearchListener {
     private final DownloadsTableModel tableModel;
     private final SwingAudit audit;

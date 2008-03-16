@@ -1,3 +1,5 @@
+package sm;
+
 import java.io.File;
 
 class MutableSettings implements Settings {
