@@ -1,7 +1,5 @@
 package sm;
 
-import org.xml.sax.SAXException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -12,14 +10,15 @@ import java.util.concurrent.TimeUnit;
 
 public class Downloader {
 
+    public static final int READ_TIME = 1;
+
     private final String url;
     private final File dir;
     private final RapidShareResourceFinder resourceFinder;
-    private double byteCount = 0;
+    private long byteCount = 0;
     private long currentRate;
-    public int length;
+    private long length;
     private boolean isDownloading;
-    public static final int READ_TIME = 1;
 
     public Downloader(RapidShareResourceFinder resourceFinder, String url, File dir) {
         this.resourceFinder = resourceFinder;
@@ -28,17 +27,18 @@ public class Downloader {
     }
 
     public long getDownloadSize() {
-        return (long) length;
+        return length;
     }
 
     public long getDownloadedSoFar() {
-        return (long) byteCount;
+        return byteCount;
     }
 
-    public void download() throws InvalidRapidshareUrlException, IOException, SAXException, InterruptedException {
-        final File file = new File(dir, url.substring(url.lastIndexOf("/") + READ_TIME));
+    public void download() throws InvalidRapidshareUrlException, IOException, InterruptedException {
+        final File file = new File(dir, url.substring(url.lastIndexOf("/") + 1));
         long startingByte = file.length();
         byteCount = startingByte;
+        
         resourceFinder.connect(url, startingByte, new ResourceHandler() {
             public void setTotal(int total) {
                 length = total;

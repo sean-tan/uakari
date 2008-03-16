@@ -73,66 +73,68 @@ class RapidShareResourceFinder {
         }
     }
 
-    public void connect(String url, long startingByte, ResourceHandler resourceHandler) throws IOException, SAXException, InvalidRapidshareUrlException, InterruptedException {
-        WebClient client = new WebConversation();
-        ClientProperties properties = client.getClientProperties();
-        properties.setAcceptCookies(true);
-        properties.setUserAgent("Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.8 ) Gecko/20051111 Firefox/1.5");
-        properties.setAutoRedirect(true);
+    public void connect(String url, long startingByte, ResourceHandler resourceHandler) throws IOException, InvalidRapidshareUrlException, InterruptedException {
+        try {
+            WebClient client = new WebConversation();
+            ClientProperties properties = client.getClientProperties();
+            properties.setAcceptCookies(true);
+            properties.setUserAgent("Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.8 ) Gecko/20051111 Firefox/1.5");
+            properties.setAutoRedirect(true);
 
-        WebResponse webResponse = client.getResponse(new GetMethodWebRequest(url));
+            WebResponse webResponse = client.getResponse(new GetMethodWebRequest(url));
 
-        WebForm[] forms = webResponse.getForms();
-        for (WebForm form : forms) {
-            String action = form.getAction();
-            if (action.contains("rapidshare")) {
-                Button[] buttons = form.getButtons();
-                for (Button button : buttons) {
-                    if (button.getValue().equals("PREMIUM")) {
-                        WebResponse loginPage = form.submit((SubmitButton) button);
-                        WebForm[] loginForms = loginPage.getForms();
-                        for (WebForm loginForm : loginForms) {
-                            if (loginForm.getAction().equals("/cgi-bin/premium.cgi") && hasParameter("accountid", loginForm)) {
-                                loginForm.setParameter("accountid", settings.getUsername());
-                                loginForm.setParameter("password", settings.getPassword());
+            WebForm[] forms = webResponse.getForms();
+            for (WebForm form : forms) {
+                String action = form.getAction();
+                if (action.contains("rapidshare")) {
+                    Button[] buttons = form.getButtons();
+                    for (Button button : buttons) {
+                        if (button.getValue().equals("PREMIUM")) {
+                            WebResponse loginPage = form.submit((SubmitButton) button);
+                            WebForm[] loginForms = loginPage.getForms();
+                            for (WebForm loginForm : loginForms) {
+                                if (loginForm.getAction().equals("/cgi-bin/premium.cgi") && hasParameter("accountid", loginForm)) {
+                                    loginForm.setParameter("accountid", settings.getUsername());
+                                    loginForm.setParameter("password", settings.getPassword());
 
-                                WebResponse loginResponsePage = loginForm.submit();
-                                WebForm[] downloadForms = loginResponsePage.getForms();
-                                for (WebForm downloadForm : downloadForms) {
-                                    if (hasParameter("dl.start", downloadForm)) {
-                                        final WebResponse downloadPage = downloadForm.submit();
-                                        List<WebLink> downloadLocations = new ArrayList<WebLink>() {
-                                            {
-                                                WebLink[] webLinks = downloadPage.getLinks();
-                                                for (WebLink webLink : webLinks) {
-                                                    if (webLink.getText().startsWith("Download via")) {
-                                                        add(webLink);
+                                    WebResponse loginResponsePage = loginForm.submit();
+                                    WebForm[] downloadForms = loginResponsePage.getForms();
+                                    for (WebForm downloadForm : downloadForms) {
+                                        if (hasParameter("dl.start", downloadForm)) {
+                                            final WebResponse downloadPage = downloadForm.submit();
+                                            List<WebLink> downloadLocations = new ArrayList<WebLink>() {
+                                                {
+                                                    WebLink[] webLinks = downloadPage.getLinks();
+                                                    for (WebLink webLink : webLinks) {
+                                                        if (webLink.getText().startsWith("Download via")) {
+                                                            add(webLink);
+                                                        }
                                                     }
                                                 }
+                                            };
+
+                                            WebLink webLink = downloadLocations.get(Math.abs(random.nextInt() % downloadLocations.size()));
+                                            audit.addMessage(webLink.getText());
+                                            String urlString = webLink.getURLString();
+
+                                            GetMethodWebRequest request = new GetMethodWebRequest(urlString);
+                                            int total = client.getResource(request).getContentLength();
+
+                                            resourceHandler.setTotal(total);
+
+                                            if(total == startingByte)
+                                                return;
+
+                                            GetMethodWebRequest request2 = new GetMethodWebRequest(urlString);
+                                            request2.setHeaderField("Range", "bytes=" +startingByte + "-");
+                                            InputStream inputStream = client.getResource(request2).getInputStream();
+                                            try {
+                                                resourceHandler.handleStream(inputStream, url);
+                                            } finally {
+                                                inputStream.close();
                                             }
-                                        };
-
-                                        WebLink webLink = downloadLocations.get(Math.abs(random.nextInt() % downloadLocations.size()));
-                                        audit.addMessage(webLink.getText());
-                                        String urlString = webLink.getURLString();
-
-                                        GetMethodWebRequest request = new GetMethodWebRequest(urlString);
-                                        int total = client.getResource(request).getContentLength();
-
-                                        resourceHandler.setTotal(total);
-
-                                        if(total == startingByte)
                                             return;
-
-                                        GetMethodWebRequest request2 = new GetMethodWebRequest(urlString);
-                                        request2.setHeaderField("Range", "bytes=" +startingByte + "-");
-                                        InputStream inputStream = client.getResource(request2).getInputStream();
-                                        try {
-                                            resourceHandler.handleStream(inputStream, url);
-                                        } finally {
-                                            inputStream.close();
                                         }
-                                        return;
                                     }
                                 }
                             }
@@ -140,8 +142,10 @@ class RapidShareResourceFinder {
                     }
                 }
             }
-        }
 
-        throw new InvalidRapidshareUrlException(url, "download could not start, wrong username ('" + settings.getUsername() + "')?");
+            throw new InvalidRapidshareUrlException(url, "download could not start, wrong username ('" + settings.getUsername() + "')?");
+        } catch (SAXException e) {
+            throw new Bug("Should not happen", e);
+        }
     }
 }
