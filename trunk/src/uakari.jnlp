@@ -34,5 +34,5 @@
         <jar href="xercesImpl.jar"/>
         <jar href="xmlParserAPIs-2.6.2.jar"/>
     </resources>
-    <application-desc main-class="Main"/>
+    <application-desc main-class="sm.Main"/>
 </jnlp>

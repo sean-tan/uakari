@@ -1,3 +1,5 @@
+package sm;
+
 import java.io.InputStream;
 
 interface ResourceHandler {

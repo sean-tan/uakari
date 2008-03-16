@@ -1,3 +1,5 @@
+package sm;
+
 import com.meterware.httpunit.Button;
 import com.meterware.httpunit.ClientProperties;
 import com.meterware.httpunit.GetMethodWebRequest;
@@ -113,12 +115,13 @@ class RapidShareResourceFinder {
                                         WebLink webLink = downloadLocations.get(Math.abs(random.nextInt() % downloadLocations.size()));
                                         audit.addMessage(webLink.getText());
                                         String urlString = webLink.getURLString();
+
                                         GetMethodWebRequest request = new GetMethodWebRequest(urlString);
-                                        String contentRange = "bytes=" +startingByte + "-";
-                                        request.setHeaderField("Range", contentRange);
-                                        WebResponse theData = client.getResource(request);
-                                        int total = theData.getContentLength();
-                                        InputStream inputStream = theData.getInputStream();
+                                        int total = client.getResource(request).getContentLength();
+
+                                        GetMethodWebRequest request2 = new GetMethodWebRequest(urlString);
+                                        request2.setHeaderField("Range", "bytes=" +startingByte + "-");
+                                        InputStream inputStream = client.getResource(request2).getInputStream();
                                         resourceHandler.handleStream(total, inputStream, url);
                                         return;
                                     }

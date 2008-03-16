@@ -1,3 +1,5 @@
+package sm;
+
 import org.jdesktop.swingx.border.DropShadowBorder;
 
 import javax.swing.AbstractAction;

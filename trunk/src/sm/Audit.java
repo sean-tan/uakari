@@ -1,3 +1,5 @@
+package sm;
+
 interface Audit {
     void addMessage(String message);
 

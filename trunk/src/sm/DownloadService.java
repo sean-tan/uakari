@@ -1,3 +1,5 @@
+package sm;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -23,12 +25,26 @@ class DownloadService {
         return downloaders.get(url);
     }
 
-    public void startDownloading(String url) {
+    public void startDownloading(final String url) {
         Future future = tasks.get(url);
-        if (future == null || future.isCancelled() || future.isDone()) {
-            Downloader downloader = new Downloader(resourceFinder, url, settings.getDownloadPath(), audit);
+        if (future == null) {
+            final Downloader downloader = new Downloader(resourceFinder, url, settings.getDownloadPath(), audit);
             downloaders.put(url, downloader);
-            tasks.put(url, executorService.submit(downloader));
+            future = executorService.submit(new Runnable() {
+                public void run() {
+                    try {
+                        downloader.download();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
+                    } catch (Exception e) {
+                        audit.addMessage(e);
+                    } finally {
+                        tasks.remove(url);
+                    }
+                }
+            });
+            tasks.put(url, future);
         }
     }
 

@@ -1,3 +1,5 @@
+package sm;
+
 import org.jdesktop.swingx.JXFrame;
 
 import javax.swing.JFrame;

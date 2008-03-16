@@ -1,3 +1,5 @@
+package sm;
+
 class Row {
     private boolean downloading;
     private String url;
