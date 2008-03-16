@@ -1,12 +1,15 @@
 package sm;
 
-import java.io.BufferedReader;
+import static sm.DownloadsColumnModel.*;
+
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Downloader {
 
@@ -15,60 +18,58 @@ public class Downloader {
     private final String url;
     private final File dir;
     private final RapidShareResourceFinder resourceFinder;
-    private long byteCount = 0;
-    private long currentRate;
-    private long length;
+    private final AtomicLong byteCount = new AtomicLong(0);
     private boolean isDownloading;
+    private long currentRate;
+    private RandomAccessFile output;
 
-    public Downloader(RapidShareResourceFinder resourceFinder, String url, File dir) {
+    public Downloader(ScheduledExecutorService scheduledExecutorService, RapidShareResourceFinder resourceFinder, String url, File dir) {
         this.resourceFinder = resourceFinder;
         this.url = url;
         this.dir = dir;
+
+        scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
+            private long lastRead = 0;
+
+            public void run() {
+                long total = getDownloadedSoFar();
+                currentRate = total - lastRead;
+                lastRead = total;
+            }
+        }, 0, READ_TIME, TimeUnit.SECONDS);
     }
 
     public long getDownloadSize() {
-        return length;
+        try {
+            return output == null ? 0 : output.length();
+        } catch (IOException e) {
+            throw new Bug("Should not happend");
+        }
     }
 
     public long getDownloadedSoFar() {
-        return byteCount;
+        return byteCount.longValue();
     }
 
     public void download() throws InvalidRapidshareUrlException, IOException, InterruptedException {
-        final File file = new File(dir, url.substring(url.lastIndexOf("/") + 1));
-        long startingByte = file.length();
-        byteCount = startingByte;
-        
-        resourceFinder.connect(url, startingByte, new ResourceHandler() {
-            public void setTotal(int total) {
-                length = total;
-            }
+        final File file = new File(dir, filenameFromUrl(url));
+        file.delete();
+        if (file.exists())
+            throw new Bug("Cannot delete " + file);
 
-            public void handleStream(InputStream is, String url) throws InterruptedException {
-                isDownloading = true;
+        output = new RandomAccessFile(file, "rw");
 
-                try {
+        int numberOfConcurrentConnections = 8;
+        ResourceHandler[] handlers = new  ResourceHandler[numberOfConcurrentConnections];
+        CountDownLatch latch = new CountDownLatch(handlers.length);
+        for (int i = 0; i < handlers.length; i++) {
+            handlers[i] = new FileSaveResourceHandler(output, latch);
+        }
 
-                    FileWriter fileWriter = new FileWriter(file, true);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    char[] chars = new char[DownloadsTableModel.KILOBYTE * 128];
-                    int sizeRead;
-                    while ((sizeRead = reader.read(chars)) != -1) {
-                        TimeUnit.SECONDS.sleep(READ_TIME);
-                        currentRate = sizeRead;
-                        fileWriter.write(chars, 0, sizeRead);
-                        byteCount += sizeRead;
-                    }
-
-                    fileWriter.flush();
-                    fileWriter.close();
-                } catch (IOException e) {
-                    throw new Bug("Cannot write to " + file.getAbsolutePath(), e);
-                } finally {
-                    isDownloading = false;
-                }
-            }
-        });
+        isDownloading = true;
+        resourceFinder.connect(url, handlers);
+        latch.await();
+        isDownloading = false;
     }
 
     public long getCurrentRate() {
@@ -80,6 +81,55 @@ public class Downloader {
     }
 
     public boolean isComplete() {
-        return length == byteCount;
+        try {
+            return output != null && output.length() > 0 && output.length() == byteCount.longValue();
+        } catch (IOException e) {
+            throw new Bug("Shouldn't happen", e);
+        }
+    }
+
+    public void stop() {
+        resourceFinder.cancel();
+    }
+
+    private class FileSaveResourceHandler implements ResourceHandler {
+        private final RandomAccessFile file;
+        private final CountDownLatch latch;
+
+        public FileSaveResourceHandler(RandomAccessFile file, CountDownLatch latch) {
+            this.file = file;
+            this.latch = latch;
+        }
+
+        public void setTotal(int total) {
+            try {
+                synchronized (file) {
+                    file.setLength(total);
+                }
+            } catch (IOException e) {
+                throw new Bug("Cannot set file size", e);
+            }
+        }
+
+        public void handleStream(InputStream is, long startingByte) throws InterruptedException {
+            try {
+                long filePointer = startingByte;
+                byte[] chars = new byte[DownloadsTableModel.KILOBYTE * 128];
+                int sizeRead;
+                while ((sizeRead = is.read(chars)) != -1) {
+                    TimeUnit.SECONDS.sleep(READ_TIME);
+                    synchronized (file) {
+                        file.seek(filePointer);
+                        file.write(chars, 0, sizeRead);
+                        filePointer += sizeRead;
+                    }
+                    byteCount.addAndGet(sizeRead);
+                }
+            } catch (IOException e) {
+                throw new Bug("Cannot write to " + file, e);
+            } finally {
+                latch.countDown();
+            }
+        }
     }
 }

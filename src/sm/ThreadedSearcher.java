@@ -5,17 +5,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 class ThreadedSearcher implements Searcher {
-    private final ExecutorService executorService = Executors.newFixedThreadPool(1);
+    private final ExecutorService executorService;
     private final RapidShareUrlParser rapidShareUrlParser;
     private final Audit audit;
     private List<SearchListener> listeners = new ArrayList<SearchListener>();
     private Future<?> work;
 
-    public ThreadedSearcher(RapidShareUrlParser rapidShareUrlParser, Audit audit) {
+    public ThreadedSearcher( ExecutorService executorService, RapidShareUrlParser rapidShareUrlParser, Audit audit) {
+        this.executorService = executorService;
         this.rapidShareUrlParser = rapidShareUrlParser;
         this.audit = audit;
     }

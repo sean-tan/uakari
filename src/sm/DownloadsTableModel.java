@@ -1,5 +1,7 @@
 package sm;
 
+import static sm.DownloadsColumnModel.Col.*;
+
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -51,7 +53,7 @@ class DownloadsTableModel implements TableModel {
     }
 
     public boolean isCellEditable(int row, int col) {
-        return DownloadsColumnModel.Col.DOWNLOAD == col(col);
+        return DOWNLOAD == col(col);
     }
 
     public Object getValueAt(int rowIndex, int colIndex) {
@@ -69,7 +71,7 @@ class DownloadsTableModel implements TableModel {
     }
 
     public void setValueAt(Object object, int rowIndex, int colIndex) {
-        if (DownloadsColumnModel.Col.DOWNLOAD != col(colIndex))
+        if (DOWNLOAD != col(colIndex))
             return;
 
         Boolean flag = (Boolean) object;
@@ -107,7 +109,12 @@ class DownloadsTableModel implements TableModel {
     }
 
     public boolean containsUrl(String url) {
-        return downloadService.getDownloader(url) != null;
+        for (int row = 0; row < getRowCount(); row++) {
+            String value = (String) getValueAt(row, indexOf(RAPIDSHARE_FILE));
+            if (value.equals(url))
+                return true;
+        }
+        return false;
     }
 
     public void foreachDownloader(DownloadsTableModel.DownloaderVisitor downloaderVisitor) {
