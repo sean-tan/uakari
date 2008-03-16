@@ -25,10 +25,10 @@
     <exclude name="**/rcs/**"/>
     <exclude name="**/.DS_Store/**"/>
     <exclude name="**/.svn/**"/>
-    <exclude name="**/vssver.scc/**"/>
-    <exclude name="**/vssver2.scc/**"/>
     <exclude name="**/.sbas/**"/>
     <exclude name="**/.IJI.*/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
   </patternset>
   <patternset id="compiler.resources">
     <include name="**/?*.properties"/>
@@ -42,6 +42,37 @@
     <include name="**/?*.tld"/>
   </patternset>
   
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.5" value="${jdk.home.1.5}/bin"/>
+  <path id="jdk.classpath.1.5">
+    <fileset dir="${jdk.home.1.5}">
+      <include name="lib/deploy.jar"/>
+      <include name="../Classes/dt.jar"/>
+      <include name="../Classes/jce.jar"/>
+      <include name="lib/plugin.jar"/>
+      <include name="lib/sa-jdi.jar"/>
+      <include name="../Classes/charsets.jar"/>
+      <include name="../Classes/classes.jar"/>
+      <include name="../Classes/jconsole.jar"/>
+      <include name="../Classes/jsse.jar"/>
+      <include name="../Classes/laf.jar"/>
+      <include name="../Classes/ui.jar"/>
+      <include name="lib/ext/apple_provider.jar"/>
+      <include name="lib/ext/dnsns.jar"/>
+      <include name="lib/ext/localedata.jar"/>
+      <include name="lib/ext/sunjce_provider.jar"/>
+      <include name="lib/ext/sunpkcs11.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.5}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.5}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.5"/>
+  
+  
+  <!-- Global Libraries -->
+  
   <!-- Modules -->
   
   
@@ -50,6 +81,9 @@
   <dirname property="module.uakari.basedir" file="${ant.file}"/>
   
   
+  <property name="module.jdk.home.uakari" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.uakari" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.uakari" value="${project.jdk.classpath}"/>
   
   <property name="compiler.args.uakari" value="${compiler.args}"/>
   
@@ -61,6 +95,7 @@
   </path>
   
   <path id="uakari.module.classpath">
+    <path refid="${module.jdk.classpath.uakari}"/>
     <pathelement location="${module.uakari.basedir}/lib/runtime/jaxen-1.1.jar"/>
     <pathelement location="${module.uakari.basedir}/lib/runtime/commons-httpclient-3.0.1.jar"/>
     <pathelement location="${module.uakari.basedir}/lib/runtime/looks-2.0.4.jar"/>
@@ -102,7 +137,7 @@
   
   <target name="compile.module.uakari.production" description="Compile module uakari; production classes">
     <mkdir dir="${uakari.output.dir}"/>
-    <javac2 destdir="${uakari.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+    <javac2 destdir="${uakari.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.uakari}/javac">
       <compilerarg line="${compiler.args.uakari}"/>
       <bootclasspath refid="uakari.module.bootclasspath"/>
       <classpath refid="uakari.module.classpath"/>

@@ -35,8 +35,7 @@ class DownloadService {
                     try {
                         downloader.download();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        Thread.currentThread().interrupt();
+                        //cool - must have been cancelled by the user
                     } catch (Exception e) {
                         audit.addMessage(e);
                     } finally {
@@ -49,7 +48,7 @@ class DownloadService {
     }
 
     public void stopDownloading(String url) {
-        Future future = tasks.remove(url);
+        Future future = tasks.get(url);
         if(future != null)
             future.cancel(true);
     }
