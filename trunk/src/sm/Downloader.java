@@ -70,6 +70,7 @@ public class Downloader {
         resourceFinder.connect(url, handlers);
         latch.await();
         isDownloading = false;
+        output.close();
     }
 
     public long getCurrentRate() {
