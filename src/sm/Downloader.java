@@ -60,7 +60,7 @@ public class Downloader {
         output = new RandomAccessFile(file, "rw");
 
         int numberOfConcurrentConnections = 4;
-        ResourceHandler[] handlers = new  ResourceHandler[numberOfConcurrentConnections];
+        ResourceHandler[] handlers = new ResourceHandler[numberOfConcurrentConnections];
         CountDownLatch latch = new CountDownLatch(handlers.length);
         for (int i = 0; i < handlers.length; i++) {
             handlers[i] = new FileSaveResourceHandler(output, latch);

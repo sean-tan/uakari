@@ -3,12 +3,26 @@ package sm;
 import org.jdesktop.swingx.JXFrame;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class Uakari {
+     private static void setLookAndFeel() {
+        try {
+            String lnfName = System.getProperty("swing.defaultlaf", null);
+            if (lnfName == null) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } else {
+                UIManager.setLookAndFeel(lnfName);
+            }
+        } catch (Exception e) {
+            throw new Bug("Does this happen?", e);
+        }
+    }
+
     /*
     - default to home dir
     - save settings to file (maybe temp dir)
@@ -19,6 +33,8 @@ public class Uakari {
      */
 
     public static void main(String[] args) throws Exception {
+        setLookAndFeel();
+        
         String homeDir = System.getenv().get("HOME");
         if(homeDir == null)
             homeDir = System.getenv().get("HOMEPATH");
