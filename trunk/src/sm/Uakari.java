@@ -24,12 +24,8 @@ public class Uakari {
     }
 
     /*
-    - default to home dir
     - save settings to file (maybe temp dir)
     - add rapidshare .de / .com option
-    - use jgoodies l&f
-    - use swingx table
-    - add remove button to row
      */
 
     public static void main(String[] args) throws Exception {
